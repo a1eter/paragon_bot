@@ -17,7 +17,7 @@ git clone https://github.com/a1eter/paragon_bot.git
 cd paragon_bot
 pip install -r requirements.txt
 cp .env.example .env    # заполнить своими данными
-python bot.py
+python paragon_bot.py
 ```
 
 ## Конфиг (.env)
@@ -46,7 +46,7 @@ DD_DEFAULT_CURRENCY=PLN         # валюта по умолчанию (ISO-ко
 
 ```
 paragon_bot/
-├── bot.py                — Telegram-бот (python-telegram-bot v21)
+├── paragon_bot.py        — Telegram-бот (python-telegram-bot v21)
 ├── drebedengi_api.py     — SOAP-клиент (сырой XML, без zeep/suds)
 ├── lidl_parser.py        — Парсер чеков Lidl (Польша)
 ├── rules.py              — Применение правил keyword → категория
@@ -104,7 +104,7 @@ paragon_bot/
 cd S:\lidl_bot
 pip install -r requirements.txt
 copy .env.example .env    # заполнить своими токенами
-python bot.py
+python paragon_bot.py
 ```
 
 ## Конфиг (.env)
@@ -144,7 +144,7 @@ DD_PASS=demo
 ```
 S:\lidl_bot\
 ├── drebedengi_api.py   — SOAP-клиент (сырой XML без zeep/suds)
-├── bot.py              — Telegram-бот (python-telegram-bot v21)
+├── paragon_bot.py      — Telegram-бот (python-telegram-bot v21)
 ├── requirements.txt
 ├── .env.example        — шаблон конфига
 └── .env                — твой конфиг (не коммитить!)

@@ -35,7 +35,7 @@ logging.basicConfig(
     handlers=[
         logging.StreamHandler(),
         logging.FileHandler(
-            os.path.join(os.path.dirname(__file__), "bot.log"),
+            os.path.join(os.path.dirname(__file__), "paragon_bot.log"),
             encoding="utf-8",
         ),
     ],

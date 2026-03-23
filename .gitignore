@@ -1,0 +1,23 @@
+# Секреты
+.env
+
+# Личные данные
+my_account_data.json
+bot.log
+rules.json
+
+# Временные и тестовые файлы
+_find_category.py
+_test*.py
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/

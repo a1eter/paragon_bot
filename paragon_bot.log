@@ -372,3 +372,163 @@ KeyboardInterrupt
 2026-03-23 12:48:53,499 [INFO] __main__: Бот запущен.
 2026-03-23 12:48:53,759 [INFO] apscheduler.scheduler: Scheduler started
 2026-03-23 12:48:53,759 [INFO] telegram.ext.Application: Application started
+2026-03-23 19:28:52,263 [INFO] __main__: Загружаю справочники из Drebedengi...
+2026-03-23 19:28:54,156 [INFO] __main__: Кэш загружен: 25 валют, 115 категорий, 96 счетов
+2026-03-23 19:28:55,303 [INFO] __main__: Бот запущен.
+2026-03-23 19:28:55,569 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-23 19:28:55,569 [INFO] telegram.ext.Application: Application started
+2026-03-24 20:44:39,358 [INFO] __main__: Правило сохранено: kisiel → Продукты питания и напитки
+2026-03-24 20:44:41,950 [INFO] __main__: Правило сохранено: muszyńskie → Продукты питания и напитки
+2026-03-24 20:44:43,737 [INFO] __main__: Правило сохранено: piratki → Продукты питания и напитки
+2026-03-24 20:45:25,077 [INFO] __main__: Правило сохранено: koncentrat → Бытовая химия и инвентарь
+2026-03-24 20:47:12,784 [INFO] telegram.ext.Application: Application is stopping. This might take a moment.
+2026-03-24 20:47:12,784 [INFO] apscheduler.scheduler: Scheduler has been shut down
+2026-03-24 20:47:12,788 [INFO] telegram.ext.Application: Application.stop() complete
+2026-03-24 20:47:54,267 [INFO] __main__: Загружаю справочники из Drebedengi...
+2026-03-24 20:47:55,017 [INFO] __main__: Кэш загружен: 25 валют, 115 категорий, 96 счетов
+2026-03-24 20:47:55,769 [INFO] __main__: Бот запущен.
+2026-03-24 20:47:56,012 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-24 20:47:56,012 [INFO] telegram.ext.Application: Application started
+2026-03-24 20:50:07,125 [INFO] __main__: Правило сохранено: soft → Детская гигиена
+2026-03-25 11:08:35,415 [INFO] __main__: Правило сохранено: herbatniki → Продукты питания и напитки
+2026-03-25 11:08:36,657 [INFO] __main__: Правило сохранено: borówka → Продукты питания и напитки
+2026-03-25 11:08:38,638 [INFO] __main__: Правило сохранено: nektar → Продукты питания и напитки
+2026-03-25 11:08:43,896 [INFO] __main__: Правило сохранено: smoothie → Продукты питания и напитки
+2026-03-25 11:08:45,691 [INFO] __main__: Правило сохранено: camembert → Продукты питания и напитки
+2026-03-25 11:09:58,497 [INFO] __main__: Правило сохранено: verdin → Продукты питания и напитки
+2026-03-25 11:10:57,285 [INFO] __main__: Правило сохранено: oregano → Продукты питания и напитки
+2026-03-25 11:10:58,807 [INFO] __main__: Правило сохранено: susz.pom.czosn → Продукты питания и напитки
+2026-03-25 11:11:21,340 [ERROR] telegram.ext.Application: No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\ext\_application.py", line 1315, in process_update
+    await coroutine
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\ext\_handlers\basehandler.py", line 159, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\bots\paragon_bot\paragon_bot.py", line 827, in handle_callback
+    await query.answer()
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\_callbackquery.py", line 190, in answer
+    return await self.get_bot().answer_callback_query(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\ext\_extbot.py", line 969, in answer_callback_query
+    return await super().answer_callback_query(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\_bot.py", line 4440, in answer_callback_query
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\ext\_extbot.py", line 369, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\request\_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\request\_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.BadRequest: Query is too old and response timeout expired or query id is invalid
+2026-03-25 11:12:29,069 [INFO] __main__: Правило сохранено: sok → Продукты питания и напитки
+2026-03-25 11:15:56,736 [INFO] telegram.ext.Application: Application is stopping. This might take a moment.
+2026-03-25 11:15:56,741 [INFO] apscheduler.scheduler: Scheduler has been shut down
+2026-03-25 11:15:56,743 [INFO] telegram.ext.Application: Application.stop() complete
+2026-03-25 11:16:01,158 [INFO] __main__: Загружаю справочники из Drebedengi...
+2026-03-25 11:16:01,916 [INFO] __main__: Кэш загружен: 25 валют, 115 категорий, 96 счетов
+2026-03-25 11:16:02,951 [INFO] __main__: Бот запущен.
+2026-03-25 11:16:03,151 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-25 11:16:03,151 [INFO] telegram.ext.Application: Application started
+2026-03-25 11:30:09,366 [INFO] __main__: Загружаю справочники из Drebedengi...
+2026-03-25 11:30:10,156 [INFO] __main__: Кэш загружен: 25 валют, 115 категорий, 96 счетов
+2026-03-25 11:30:11,067 [INFO] __main__: Бот запущен.
+2026-03-25 11:30:11,334 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-25 11:30:11,335 [INFO] telegram.ext.Application: Application started
+2026-03-25 11:36:40,638 [INFO] telegram.ext.Application: Application is stopping. This might take a moment.
+2026-03-25 11:36:40,639 [INFO] apscheduler.scheduler: Scheduler has been shut down
+2026-03-25 11:36:40,639 [INFO] telegram.ext.Application: Application.stop() complete
+2026-03-25 11:36:43,259 [INFO] __main__: Загружаю справочники из Drebedengi...
+2026-03-25 11:36:44,061 [INFO] __main__: Кэш загружен: 25 валют, 115 категорий, 96 счетов
+2026-03-25 11:36:47,015 [INFO] __main__: Бот запущен.
+2026-03-25 11:36:47,505 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-25 11:36:47,507 [INFO] telegram.ext.Application: Application started
+2026-03-25 11:36:55,077 [ERROR] telegram.ext.Application: No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\ext\_application.py", line 1315, in process_update
+    await coroutine
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\site-packages\telegram\ext\_handlers\basehandler.py", line 159, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\bots\paragon_bot\paragon_bot.py", line 718, in handle_entry
+    records, valid_lines, all_warnings = _lidl_to_records(parsed_receipt, cache, base_client_id)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\bots\paragon_bot\paragon_bot.py", line 526, in _lidl_to_records
+    record, rule_warnings = apply_rules(item["name"], record, cache)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\bots\paragon_bot\rules.py", line 25, in apply_rules
+    rules = _load_rules()
+            ^^^^^^^^^^^^^
+  File "C:\bots\paragon_bot\rules.py", line 16, in _load_rules
+    return json.load(f).get("patterns", [])
+           ^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ale\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 184 column 7 (char 3470)
+2026-03-25 11:37:53,256 [INFO] telegram.ext.Application: Application is stopping. This might take a moment.
+2026-03-25 11:37:53,257 [INFO] apscheduler.scheduler: Scheduler has been shut down
+2026-03-25 11:37:53,258 [INFO] telegram.ext.Application: Application.stop() complete
+2026-03-25 11:37:56,489 [INFO] __main__: Загружаю справочники из Drebedengi...
+2026-03-25 11:37:57,211 [INFO] __main__: Кэш загружен: 25 валют, 115 категорий, 96 счетов
+2026-03-25 11:38:00,550 [INFO] __main__: Бот запущен.
+2026-03-25 11:38:00,813 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-25 11:38:00,813 [INFO] telegram.ext.Application: Application started
+2026-03-25 11:39:36,967 [INFO] __main__: Правило сохранено: żonkile → Цветы
+2026-03-25 11:40:45,915 [INFO] __main__: Правило сохранено: lubisie nadz.c → Продукты питания и напитки
+2026-03-25 11:40:49,882 [INFO] __main__: Правило сохранено: mintaj file → Продукты питания и напитки
+2026-03-25 11:40:51,678 [INFO] __main__: Правило сохранено: szprot wędz. → Продукты питания и напитки
+2026-03-25 11:40:52,860 [INFO] __main__: Правило сохранено: tuńczyk jednol → Продукты питания и напитки
+2026-03-25 11:40:54,052 [INFO] __main__: Правило сохранено: mąka tortowa → Продукты питания и напитки
+2026-03-25 11:41:04,385 [INFO] __main__: Правило сохранено: rosół → Продукты питания и напитки
+2026-03-25 11:41:10,587 [INFO] __main__: Правило сохранено: roshen bunn → Продукты питания и напитки
+2026-03-25 11:41:12,950 [INFO] __main__: Правило сохранено: jajka nadzi → Продукты питания и напитки
+2026-03-25 11:41:23,000 [INFO] __main__: Правило сохранено: skrzydła → Продукты питания и напитки
+2026-03-25 11:42:21,621 [INFO] __main__: Правило сохранено: owoce w → Продукты питания и напитки
+2026-03-25 11:42:25,069 [INFO] __main__: Правило сохранено: chipsy w → Продукты питания и напитки
+2026-03-25 11:43:07,599 [INFO] __main__: Правило сохранено: passata pomid. → Продукты питания и напитки
+2026-03-25 11:43:19,082 [INFO] __main__: Правило сохранено: majonez → Продукты питания и напитки
+2026-03-25 11:43:22,119 [INFO] __main__: Правило сохранено: pierożki gyoza → Продукты питания и напитки
+2026-03-25 11:43:24,818 [INFO] __main__: Правило сохранено: paluszki rybne → Продукты питания и напитки
+2026-03-25 11:45:12,379 [INFO] __main__: Правило сохранено: koszula → Одежда, обувь
+2026-03-25 11:45:22,682 [INFO] __main__: Правило сохранено: croissant → Продукты питания и напитки
+2026-03-25 11:50:48,591 [INFO] __main__: Правило сохранено: konafetto → Продукты питания и напитки
+2026-03-25 11:51:02,592 [INFO] __main__: Правило сохранено: quick milk → Продукты питания и напитки
+2026-03-25 11:51:20,587 [INFO] __main__: Правило сохранено: mieszkocuki → Продукты питания и напитки
+2026-03-25 11:51:39,299 [INFO] __main__: Правило сохранено: kawa → Продукты питания и напитки
+2026-03-25 11:51:53,830 [INFO] __main__: Правило сохранено: kefir → Продукты питания и напитки
+2026-03-25 11:52:08,178 [INFO] __main__: Правило сохранено: szczypta smaku → Продукты питания и напитки
+2026-03-25 11:53:15,554 [INFO] __main__: Правило сохранено: baterie alkal. → Техника, электроника, инструмент
+2026-03-25 12:08:11,021 [INFO] __main__: Правило сохранено: ziemniak → Продукты питания и напитки
+2026-03-25 12:08:13,481 [INFO] __main__: Правило сохранено: polędwiczka → Продукты питания и напитки
+2026-03-25 12:09:59,540 [INFO] __main__: Правило сохранено: karkówka → Продукты питания и напитки
+2026-03-25 12:10:23,610 [INFO] __main__: Правило сохранено: winiary pomysł → Продукты питания и напитки
+2026-03-25 12:10:27,694 [INFO] __main__: Правило сохранено: winiary pomysł → Продукты питания и напитки
+2026-03-25 12:10:29,259 [INFO] __main__: Правило сохранено: brokuły różycz → Продукты питания и напитки
+2026-03-25 18:19:23,900 [INFO] __main__: Правило сохранено: ręcznik papier. → Кухонные принадлежности 
+2026-03-25 18:22:00,851 [INFO] __main__: Правило сохранено: mcennedy żelki → Продукты питания и напитки
+2026-03-25 18:22:30,612 [INFO] __main__: Правило сохранено: sm gostyń → Продукты питания и напитки
+2026-03-25 18:22:32,267 [INFO] __main__: Правило сохранено: wafelki lekkie → Продукты питания и напитки
+2026-03-25 18:22:34,230 [INFO] __main__: Правило сохранено: żeberka wieprzowe → Продукты питания и напитки
+2026-03-25 18:22:37,461 [INFO] __main__: Правило сохранено: nuggetsy xxl → Продукты питания и напитки
+2026-03-25 21:21:11,043 [INFO] telegram.ext.Application: Application is stopping. This might take a moment.
+2026-03-25 21:21:11,050 [INFO] apscheduler.scheduler: Scheduler has been shut down
+2026-03-25 21:21:11,056 [INFO] telegram.ext.Application: Application.stop() complete

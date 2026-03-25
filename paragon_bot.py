@@ -289,7 +289,7 @@ def _account_search_keyboard(results: list) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(buttons)
 
 
-def _category_keyboard(cache: dict) -> InlineKeyboardMarkup:
+def _category_keyboard(cache: dict, with_kw_edit: bool = False) -> InlineKeyboardMarkup:
     """Клавиатура с избранными категориями + кнопка поиска."""
     buttons = []
     row = []
@@ -304,6 +304,8 @@ def _category_keyboard(cache: dict) -> InlineKeyboardMarkup:
     if row:
         buttons.append(row)
     buttons.append([InlineKeyboardButton("🔍 Искать другую…", callback_data="cat_search")])
+    if with_kw_edit:
+        buttons.append([InlineKeyboardButton("✏️ Изменить ключевое слово", callback_data="cat_kw_edit")])
     buttons.append([InlineKeyboardButton("⏭ Пропустить (Без категории)", callback_data="cat_skip")])
     return InlineKeyboardMarkup(buttons)
 
@@ -320,7 +322,8 @@ def _classify_prompt(item: dict, remaining: int) -> str:
     more = f" (ещё {remaining - 1} после)" if remaining > 1 else ""
     return (
         f"❓ Не знаю категорию для: <b>{item['line']}</b>{more}\n"
-        f"Сумма: {item['amount']:.2f} {item['cur_code']}\n\n"
+        f"Сумма: {item['amount']:.2f} {item['cur_code']}\n"
+        f"🔑 Ключ для правила: <code>{item['keyword']}</code>\n\n"
         f"Выбери категорию — запомню на будущее:"
     )
 
@@ -447,8 +450,13 @@ def _build_success_message(records: list, cache: dict) -> str:
         groups[cat_name].append((comment, amount, cur_code))
         total += amount
 
+    # Кауция — в конец
+    KAUCJA_NAMES = {"kaucja", "kаucia", "залог", "кауция"}
+    main_groups = {k: v for k, v in groups.items() if k.lower() not in KAUCJA_NAMES}
+    tail_groups = {k: v for k, v in groups.items() if k.lower() in KAUCJA_NAMES}
+
     lines = [f"📅 {date_str}\n"]
-    for cat_name, items in groups.items():
+    for cat_name, items in {**main_groups, **tail_groups}.items():
         emoji = _cat_emoji(cat_name)
         lines.append(f"{emoji} <b>{cat_name}</b>")
         for comment, amount, code in items:
@@ -648,7 +656,7 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         except Exception:
             pass
         if not cat_list:
-            kb = _category_keyboard(cache)
+            kb = _category_keyboard(cache, with_kw_edit=True)
             note = f"\n\n❌ По запросу «{text}» ничего не найдено. Попробуй снова:"
         else:
             kb = _category_search_keyboard(cat_list)
@@ -660,6 +668,30 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             parse_mode="HTML",
             reply_markup=kb,
         )
+        return
+
+    # ── Режим редактирования ключевого слова ──────────────────
+    if context.user_data.get("kw_edit_active"):
+        context.user_data.pop("kw_edit_active", None)
+        classify_queue = context.user_data.get("classify_queue", [])
+        if classify_queue:
+            classify_queue[0]["keyword"] = text.strip()
+        chat_id = context.user_data.pop("kw_edit_chat_id", None)
+        msg_id = context.user_data.pop("kw_edit_msg_id", None)
+        cache = get_cache()
+        current = classify_queue[0] if classify_queue else None
+        try:
+            await update.message.delete()
+        except Exception:
+            pass
+        if current and chat_id and msg_id:
+            await context.bot.edit_message_text(
+                _classify_prompt(current, len(classify_queue)),
+                chat_id=chat_id,
+                message_id=msg_id,
+                parse_mode="HTML",
+                reply_markup=_category_keyboard(cache, with_kw_edit=True),
+            )
         return
 
     cache = get_cache()
@@ -693,7 +725,7 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
                 cur = cache["currencies"].get(str(record["currency_id"])) or cache["currencies"].get(record["currency_id"])
                 cur_code = cur.get("code", "?") if cur else "?"
                 comment_words = [w for w in record["comment"].split() if not (w.startswith("[") and w.endswith("]"))]
-                keyword = comment_words[0] if comment_words else line.split()[0]
+                keyword = " ".join(comment_words[:2]) if comment_words else " ".join(line.split()[:2])
                 classify_queue.append({
                     "idx":      i,
                     "keyword":  keyword,
@@ -793,9 +825,9 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         if _is_default_category(record, cache):
             cur = cache["currencies"].get(str(record["currency_id"])) or cache["currencies"].get(record["currency_id"])
             cur_code = cur.get("code", "?") if cur else "?"
-            # Берём первое слово комментария, пропуская тег [LIDL]
+            # Берём первые два слова комментария, пропуская тег [LIDL]
             comment_words = [w for w in record["comment"].split() if not (w.startswith("[") and w.endswith("]"))]
-            keyword = comment_words[0] if comment_words else line.split()[0]
+            keyword = " ".join(comment_words[:2]) if comment_words else " ".join(line.split()[:2])
             classify_queue.append({
                 "idx": i,
                 "keyword": keyword,
@@ -820,6 +852,23 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         parse_mode="HTML",
         reply_markup=_account_keyboard(),
     )
+
+
+async def _auto_send(query, records: list, cache: dict) -> None:
+    """Отправляет записи на Drebedengi и показывает результат."""
+    try:
+        result, raw_response = dd.set_record_list(records)
+        if result is None:
+            logger.warning("Ответ сервера не распознан. raw=\n%s", raw_response)
+            await query.edit_message_text(
+                f"❓ Сервер не подтвердил запись. Ответ:\n<code>{raw_response[:600]}</code>",
+                parse_mode="HTML",
+            )
+        else:
+            msg = _build_success_message(records, cache)
+            await query.edit_message_text(msg, parse_mode="HTML")
+    except Exception as e:
+        await query.edit_message_text(f"❌ Ошибка при записи: {e}")
 
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -863,12 +912,12 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             await query.edit_message_text(
                 _classify_prompt(first, len(classify_queue)),
                 parse_mode="HTML",
-                reply_markup=_category_keyboard(cache),
+                reply_markup=_category_keyboard(cache, with_kw_edit=True),
             )
         else:
-            warnings = context.user_data.get("pending_warnings", [])
-            preview = _build_preview(records, cache, warnings)
-            await query.edit_message_text(preview, parse_mode="HTML", reply_markup=_CONFIRM_KB)
+            records = context.user_data.pop("pending_records", [])
+            context.user_data.pop("pending_warnings", None)
+            await _auto_send(query, records, cache)
         return
 
     # ── Классификация категорий ───────────────────────────────
@@ -900,7 +949,28 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             await query.edit_message_text(
                 _classify_prompt(current, len(classify_queue)),
                 parse_mode="HTML",
-                reply_markup=_category_keyboard(cache),
+                reply_markup=_category_keyboard(cache, with_kw_edit=True),
+            )
+            return
+
+        if query.data == "cat_kw_edit":
+            context.user_data["kw_edit_active"] = True
+            context.user_data["kw_edit_chat_id"] = query.message.chat_id
+            context.user_data["kw_edit_msg_id"] = query.message.message_id
+            await query.edit_message_text(
+                _classify_prompt(current, len(classify_queue))
+                + "\n\n✏️ <i>Напиши новое ключевое слово:</i>",
+                parse_mode="HTML",
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("◀️ Отмена", callback_data="cat_kw_back")]]),
+            )
+            return
+
+        if query.data == "cat_kw_back":
+            context.user_data.pop("kw_edit_active", None)
+            await query.edit_message_text(
+                _classify_prompt(current, len(classify_queue)),
+                parse_mode="HTML",
+                reply_markup=_category_keyboard(cache, with_kw_edit=True),
             )
             return
 
@@ -927,45 +997,13 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             await query.edit_message_text(
                 _classify_prompt(next_item, len(classify_queue)),
                 parse_mode="HTML",
-                reply_markup=_category_keyboard(cache),
+                reply_markup=_category_keyboard(cache, with_kw_edit=True),
             )
         else:
-            records = context.user_data.get("pending_records", [])
-            warnings = context.user_data.get("pending_warnings", [])
-            preview = _build_preview(records, cache, warnings)
-            await query.edit_message_text(preview, parse_mode="HTML", reply_markup=_CONFIRM_KB)
-        return
-
-    # ── Подтверждение / отмена ────────────────────────────────
-    if query.data == "confirm":
-        records = context.user_data.pop("pending_records", None)
-        context.user_data.pop("pending_warnings", None)
-        context.user_data.pop("classify_queue", None)
-        if not records:
-            await query.edit_message_text("Запись устарела, попробуй снова.")
-            return
-        try:
-            result, raw_response = dd.set_record_list(records)
-            if isinstance(result, list) and result:
-                msg = _build_success_message(records, cache)
-                await query.edit_message_text(msg, parse_mode="HTML")
-            elif result is None:
-                logger.warning("Ответ сервера не распознан. raw=\n%s", raw_response)
-                await query.edit_message_text(
-                    f"❓ Сервер не подтвердил запись. Ответ:\n<code>{raw_response[:600]}</code>",
-                    parse_mode="HTML",
-                )
-            else:
-                msg = _build_success_message(records, cache)
-                await query.edit_message_text(msg, parse_mode="HTML")
-        except Exception as e:
-            await query.edit_message_text(f"❌ Ошибка при записи: {e}")
-
-    elif query.data == "cancel":
-        context.user_data.pop("pending_records", None)
-        context.user_data.pop("pending_warnings", None)
-        context.user_data.pop("classify_queue", None)
-        await query.edit_message_text("Отменено.")
+            records = context.user_data.pop("pending_records", [])
+            context.user_data.pop("pending_warnings", None)
+            context.user_data.pop("classify_queue", None)
+            await _auto_send(query, records, cache)
 
 
 # ──────────────────────────────────────────────────────────────

@@ -11,7 +11,7 @@ from datetime import datetime
 from xml.sax.saxutils import escape
 
 
-SOAP_URL = "http://www.drebedengi.ru/soap/"
+SOAP_URL = "https://www.drebedengi.ru/soap/"
 SOAP_HEADERS = {
     "Content-Type": "text/xml; charset=utf-8",
     "SOAPAction": "urn:SoapAction",

@@ -74,7 +74,7 @@ paragon_bot/
 
 ## Drebedengi SOAP API — заметки
 
-**Endpoint:** `http://www.drebedengi.ru/soap/`  
+**Endpoint:** `https://www.drebedengi.ru/soap/`  
 **Стиль:** RPC/encoded + Apache `ns2:Map`  
 **Demo:** `demo_api` / `demo@example.com` / `demo`
 
@@ -154,8 +154,8 @@ S:\lidl_bot\
 
 ## Drebedengi SOAP API — заметки
 
-**Endpoint:** `http://www.drebedengi.ru/soap/`  
-**WSDL:** `http://www.drebedengi.ru/soap/dd.wsdl`  
+**Endpoint:** `https://www.drebedengi.ru/soap/`  
+**WSDL:** `https://www.drebedengi.ru/soap/dd.ssl.wsdl`  
 **Стиль:** RPC/encoded + Apache `ns2:Map`  
 **Demo:** `demo_api` / `demo@example.com` / `demo`
 

@@ -34,12 +34,12 @@ _PRICE_INLINE_RE = re.compile(
     r'\s+(-?\d[\d,\.]+)\s+[A-Z]\s*$'
 )
 _DISCOUNT_RE  = re.compile(r'^\s+.*?(-[\d,\.]+)\s*$')
-_SUMA_PLN_RE  = re.compile(r'^Suma PLN\s+([\d,\.]+)')
-_SUMA_FIN_RE  = re.compile(r'^Suma\s+([\d,\.]+)\s*$')
-_RAZEM_RE     = re.compile(r'^Razem\s+([\d,\.]+)\s*$')
+_SUMA_PLN_RE  = re.compile(r'^Suma PLN\s+([\d,\.]+)', re.IGNORECASE)
+_SUMA_FIN_RE  = re.compile(r'^Suma\s+([\d,\.]+)\s*$', re.IGNORECASE)
+_RAZEM_RE     = re.compile(r'^Razem\s+([\d,\.]+)\s*$', re.IGNORECASE)
 _WYDANIA_RE   = re.compile(r'^Opakowania zwrotne wydania', re.IGNORECASE)
 _PRZYJECIA_RE = re.compile(r'^Opakowania zwrotne przyjęcia', re.IGNORECASE)
-_SKIP_RE      = re.compile(r'^(?:PTU\b|Kwota\b|Płatność\b|Opakowania zwrotne suma\b)')
+_SKIP_RE      = re.compile(r'^(?:PTU\b|Kwota\b|Płatność\b|Opakowania zwrotne suma\b)', re.IGNORECASE)
 _LAST_NUM_RE  = re.compile(r'(-?\d[\d,\.]*)\s*$')
 
 

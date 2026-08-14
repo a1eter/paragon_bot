@@ -9,6 +9,7 @@ Telegram-бот для добавления записей в Drebedengi.
 """
 
 import logging
+from logging.handlers import RotatingFileHandler
 import os
 import re
 from datetime import datetime
@@ -29,13 +30,25 @@ from rules import apply_rules
 
 load_dotenv()
 
+class TruncatingFileHandler(RotatingFileHandler):
+    """При ротации обнуляет файл вместо переименования."""
+    def doRollover(self):
+        if self.stream:
+            self.stream.close()
+            self.stream = None
+        open(self.baseFilename, 'w', encoding=self.encoding).close()
+        if not self.delay:
+            self.stream = self._open()
+
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     level=logging.INFO,
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler(
+        TruncatingFileHandler(
             os.path.join(os.path.dirname(__file__), "paragon_bot.log"),
+            maxBytes=10*1024*1024,
+            backupCount=0,
             encoding="utf-8",
         ),
     ],
@@ -60,6 +73,9 @@ dd = DrebedengiClient(DD_API_ID, DD_LOGIN, DD_PASS)
 
 # Простой кэш справочников (загружается один раз при старте /refresh)
 _cache: dict = {}
+
+# Дедупликация Telegram-апдейтов (защита от повторной доставки)
+_seen_update_ids: set = set()
 
 
 def get_cache() -> dict:
@@ -207,8 +223,8 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 FAVORITE_PLACES = [
     ("16318720", "Revolut"),
     ("15310091", "PKO"),
-    ("16299773", "Santander A"),
-    ("16395412", "Santander M"),
+    ("16299773", "Erste A"),
+    ("16395412", "Erste M"),
     ("16726444", "Bybit"),
     ("10407734", "Мой кошелёк"),
 ]
@@ -603,6 +619,15 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if not is_allowed(update):
         return
 
+    # Защита от повторной доставки одного и того же апдейта Telegram-ом
+    uid = update.update_id
+    if uid in _seen_update_ids:
+        logger.warning("Дублированный update_id=%d, пропускаем", uid)
+        return
+    _seen_update_ids.add(uid)
+    if len(_seen_update_ids) > 2000:
+        _seen_update_ids.clear()
+
     text = update.message.text.strip()
 
     # ── Режим поиска счёта ────────────────────────────────────
@@ -708,7 +733,34 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         r'\s+[\d,.]+\s+[A-Z]\s*$',
         re.M,
     )
-    if "Suma PLN" in text or _LIDL_ITEM_RE.search(text):
+    _LIDL_MARKER_RE = re.compile(
+        r'Suma PLN|Opakowania zwrotne|Razem\s+[\d,]+',
+        re.IGNORECASE,
+    )
+    _LIDL_END_RE = re.compile(r'Suma PLN|Razem\s+[\d,]', re.IGNORECASE)
+
+    # Подклеиваем буфер от предыдущего фрагмента, если есть
+    lidl_buffer = context.user_data.get("lidl_buffer", "")
+    is_continuation = bool(lidl_buffer)
+    effective_text = (lidl_buffer + "\n" + text) if is_continuation else text
+
+    if _LIDL_MARKER_RE.search(effective_text) or _LIDL_ITEM_RE.search(effective_text):
+        # Фрагмент без товарных строк — хвост чека, уже обработанного ранее
+        if not _LIDL_ITEM_RE.search(effective_text):
+            logger.debug("Lidl-хвост без товарных строк, пропускаем")
+            context.user_data.pop("lidl_buffer", None)
+            return
+
+        # Чек ещё не завершён (нет Suma PLN / Razem) — буферизуем и ждём продолжения
+        if not _LIDL_END_RE.search(effective_text):
+            logger.debug("Lidl-фрагмент без финальной суммы, буферизуем (%d симв.)", len(effective_text))
+            context.user_data["lidl_buffer"] = effective_text
+            return
+
+        # Чек полный — сбрасываем буфер и парсим
+        context.user_data.pop("lidl_buffer", None)
+        text = effective_text
+
         from lidl_parser import parse_lidl_receipt
         parsed_receipt = parse_lidl_receipt(text)
         if not parsed_receipt["items"]:

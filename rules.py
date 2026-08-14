@@ -13,7 +13,10 @@ def _load_rules() -> list:
     if not os.path.exists(RULES_FILE):
         return []
     with open(RULES_FILE, encoding="utf-8") as f:
-        return json.load(f).get("patterns", [])
+        patterns = json.load(f).get("patterns", [])
+    # "Продукты питания и напитки" — fallback-категория, всегда проверяется последней
+    patterns.sort(key=lambda r: 1 if r.get("category_name") == "Продукты питания и напитки" else 0)
+    return patterns
 
 
 def apply_rules(text: str, record: dict, cache: dict) -> tuple[dict, list[str]]:

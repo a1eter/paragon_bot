@@ -8,6 +8,7 @@ Telegram-бот для добавления записей в Drebedengi.
   обед 450 #еда кафе рядом с работой
 """
 
+import hashlib
 import logging
 from logging.handlers import RotatingFileHandler
 import os
@@ -15,7 +16,7 @@ import re
 from datetime import datetime
 
 from dotenv import load_dotenv
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -68,6 +69,10 @@ ALLOWED_USER_IDS = set(
 DD_API_ID = os.getenv("DD_API_ID", "demo_api")
 DD_LOGIN = os.getenv("DD_LOGIN", "demo@example.com")
 DD_PASS = os.getenv("DD_PASS", "demo")
+
+LIDL_ACCOUNTS_RAW = os.getenv("LIDL_ACCOUNTS", "")
+LIDL_SYNC_INTERVAL_HOURS = float(os.getenv("LIDL_SYNC_INTERVAL_HOURS", "1"))
+LIDL_SYNC_TZ = os.getenv("LIDL_SYNC_TZ", "Europe/Warsaw")
 
 dd = DrebedengiClient(DD_API_ID, DD_LOGIN, DD_PASS)
 
@@ -207,11 +212,26 @@ def is_allowed(update: Update) -> bool:
 # Обработчики команд
 # ──────────────────────────────────────────────────────────────
 
+BTN_LIDL_OLD = "📦 Разобрать старый чек"
+
+
+def _main_reply_keyboard() -> ReplyKeyboardMarkup:
+    """Постоянная клавиатура внизу чата."""
+    return ReplyKeyboardMarkup(
+        [[KeyboardButton(BTN_LIDL_OLD)]],
+        resize_keyboard=True,
+        is_persistent=True,
+    )
+
+
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     uid = update.effective_user.id if update.effective_user else "?"
     await update.message.reply_text(
-        f"Telegram ID: <code>{uid}</code>",
+        f"Telegram ID: <code>{uid}</code>\n\n"
+        f"Кнопка «{BTN_LIDL_OLD}» всегда внизу чата.\n"
+        "Новые чеки Lidl приходят сами раз в час.",
         parse_mode="HTML",
+        reply_markup=_main_reply_keyboard(),
     )
 
 
@@ -487,6 +507,30 @@ def _build_success_message(records: list, cache: dict) -> str:
 
 
 
+def _lidl_stable_client_id(parsed: dict) -> int:
+    """
+    Стабильный client_id по содержимому чека.
+    Повторная отправка того же чека в Drebedengi обновит записи, а не создаст дубликат.
+    """
+    items = parsed.get("items") or []
+    parts = [
+        "lidl",
+        str(parsed.get("date") or ""),
+        str(parsed.get("time") or ""),
+        f"{sum(float(i.get('adjusted_price') or 0) for i in items):.2f}",
+        *(f"{i.get('name')}|{i.get('adjusted_price')}" for i in items),
+    ]
+    digest = hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()
+    return 1_000_000_000 + (int(digest[:12], 16) % 1_000_000_000)
+
+
+def _lidl_parsed_total(parsed: dict) -> float | None:
+    items = parsed.get("items") or []
+    if not items:
+        return None
+    return round(sum(float(i.get("adjusted_price") or 0) for i in items), 2)
+
+
 def _lidl_to_records(parsed: dict, cache: dict, base_client_id: int) -> tuple:
     """
     Конвертирует распознанный чек Лидл в список записей.
@@ -550,6 +594,71 @@ def _lidl_to_records(parsed: dict, cache: dict, base_client_id: int) -> tuple:
         valid_lines.append(item["name"])
 
     return records, valid_lines, warnings
+
+
+async def start_lidl_receipt_flow(bot, chat_id: int, user_data: dict, text: str) -> bool:
+    """
+    Запускает UI чека Лидл (выбор счёта → категории).
+    Возвращает True если чек принят, False если распознать не удалось.
+    """
+    from lidl_parser import parse_lidl_receipt
+
+    cache = get_cache()
+    if not cache:
+        await bot.send_message(chat_id, "Сначала загрузи справочники: /refresh")
+        return False
+
+    parsed_receipt = parse_lidl_receipt(text)
+    if not parsed_receipt["items"]:
+        await bot.send_message(chat_id, "Не удалось распознать позиции в чеке.")
+        return False
+
+    base_client_id = _lidl_stable_client_id(parsed_receipt)
+    records, valid_lines, all_warnings = _lidl_to_records(parsed_receipt, cache, base_client_id)
+    if not records:
+        await bot.send_message(chat_id, "Не удалось преобразовать чек в записи.")
+        return False
+
+    classify_queue = []
+    for i, (record, line) in enumerate(zip(records, valid_lines)):
+        if _is_default_category(record, cache):
+            cur = cache["currencies"].get(str(record["currency_id"])) or cache["currencies"].get(record["currency_id"])
+            cur_code = cur.get("code", "?") if cur else "?"
+            comment_words = [w for w in record["comment"].split() if not (w.startswith("[") and w.endswith("]"))]
+            keyword = " ".join(comment_words[:2]) if comment_words else " ".join(line.split()[:2])
+            classify_queue.append({
+                "idx":      i,
+                "keyword":  keyword,
+                "line":     line,
+                "amount":   record["sum"] / 100,
+                "cur_code": cur_code,
+            })
+
+    user_data["pending_records"] = records
+    user_data["pending_warnings"] = all_warnings
+    user_data["pending_lidl_fingerprint"] = {
+        "date": parsed_receipt.get("date"),
+        "time": parsed_receipt.get("time"),
+        "total": _lidl_parsed_total(parsed_receipt),
+    }
+    if classify_queue:
+        user_data["classify_queue"] = classify_queue
+    else:
+        user_data.pop("classify_queue", None)
+
+    n = len(records)
+    total = sum(r["sum"] / 100 for r in records)
+    cur = cache["currencies"].get(str(records[0]["currency_id"])) or cache["currencies"].get(records[0]["currency_id"])
+    cur_code = cur.get("code", "?") if cur else "?"
+    summary = f"{n} {'запись' if n == 1 else 'записи' if 2 <= n <= 4 else 'записей'}, итого {total:.2f} {cur_code}"
+    date_line = f"\n📅 {parsed_receipt['date']}" if parsed_receipt.get("date") else ""
+    await bot.send_message(
+        chat_id,
+        f"🧾 {summary}{date_line}\n\n💳 <b>С какого счёта?</b>",
+        parse_mode="HTML",
+        reply_markup=_account_keyboard(),
+    )
+    return True
 
 
 # ──────────────────────────────────────────────────────────────
@@ -629,6 +738,16 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         _seen_update_ids.clear()
 
     text = update.message.text.strip()
+
+    # Постоянная кнопка reply-клавиатуры
+    if text == BTN_LIDL_OLD:
+        await update.message.reply_text("Загружаю список чеков…")
+        await show_history_menu(context.application, update.effective_user.id, offset=0)
+        return
+
+    # Ответ на /lidl_auth — вставка callback URL
+    if await _maybe_lidl_auth_paste(update, context, text):
+        return
 
     # ── Режим поиска счёта ────────────────────────────────────
     if context.user_data.get("acc_search_active"):
@@ -759,47 +878,28 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
         # Чек полный — сбрасываем буфер и парсим
         context.user_data.pop("lidl_buffer", None)
-        text = effective_text
-
-        from lidl_parser import parse_lidl_receipt
-        parsed_receipt = parse_lidl_receipt(text)
-        if not parsed_receipt["items"]:
-            await update.message.reply_text("Не удалось распознать позиции в чеке.")
-            return
-        base_client_id = int(datetime.now().timestamp())
-        records, valid_lines, all_warnings = _lidl_to_records(parsed_receipt, cache, base_client_id)
-        if not records:
-            await update.message.reply_text("Не удалось преобразовать чек в записи.")
-            return
-        classify_queue = []
-        for i, (record, line) in enumerate(zip(records, valid_lines)):
-            if _is_default_category(record, cache):
-                cur = cache["currencies"].get(str(record["currency_id"])) or cache["currencies"].get(record["currency_id"])
-                cur_code = cur.get("code", "?") if cur else "?"
-                comment_words = [w for w in record["comment"].split() if not (w.startswith("[") and w.endswith("]"))]
-                keyword = " ".join(comment_words[:2]) if comment_words else " ".join(line.split()[:2])
-                classify_queue.append({
-                    "idx":      i,
-                    "keyword":  keyword,
-                    "line":     line,
-                    "amount":   record["sum"] / 100,
-                    "cur_code": cur_code,
-                })
-        context.user_data["pending_records"] = records
-        context.user_data["pending_warnings"] = all_warnings
-        if classify_queue:
-            context.user_data["classify_queue"] = classify_queue
-        n = len(records)
-        total = sum(r["sum"] / 100 for r in records)
-        cur = cache["currencies"].get(str(records[0]["currency_id"])) or cache["currencies"].get(records[0]["currency_id"])
-        cur_code = cur.get("code", "?") if cur else "?"
-        summary = f"{n} {'запись' if n == 1 else 'записи' if 2 <= n <= 4 else 'записей'}, итого {total:.2f} {cur_code}"
-        date_line = f"\n📅 {parsed_receipt['date']}" if parsed_receipt.get('date') else ""
-        await update.message.reply_text(
-            f"🧾 {summary}{date_line}\n\n💳 <b>С какого счёта?</b>",
-            parse_mode="HTML",
-            reply_markup=_account_keyboard(),
+        ok = await start_lidl_receipt_flow(
+            context.bot,
+            update.effective_chat.id,
+            context.user_data,
+            effective_text,
         )
+        # Вставка текстом не шла через Lidl API — пометим совпавший ticket,
+        # иначе maybe_push/hourly пришлют тот же чек ещё раз.
+        if ok and update.effective_user:
+            fp = context.user_data.get("pending_lidl_fingerprint") or {}
+            try:
+                from lidl_sync import account_for_telegram, mark_seen_matching_parsed
+                aid = account_for_telegram(LIDL_ACCOUNTS_RAW, update.effective_user.id)
+                if aid:
+                    mark_seen_matching_parsed(
+                        aid,
+                        date=fp.get("date"),
+                        time=fp.get("time"),
+                        total=fp.get("total"),
+                    )
+            except Exception:
+                logger.exception("Lidl mark_seen после вставки текста")
         return
 
     lines = [line.strip() for line in text.splitlines() if line.strip()]
@@ -906,9 +1006,23 @@ async def handle_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     )
 
 
-async def _auto_send(query, records: list, cache: dict) -> None:
+async def _auto_send(query, records: list, cache: dict, context: ContextTypes.DEFAULT_TYPE | None = None) -> None:
     """Отправляет записи на Drebedengi и показывает результат."""
+    if context is not None:
+        if context.user_data.get("dd_sending"):
+            logger.warning("Пропуск повторного _auto_send (уже идёт запись в DD)")
+            return
+        context.user_data["dd_sending"] = True
     try:
+        if not records:
+            await query.edit_message_text("Запись устарела, попробуй снова.")
+            return
+        logger.info(
+            "DD set_record_list: %d записей, group=%s, date=%s",
+            len(records),
+            records[0].get("group_id"),
+            (records[0].get("operation_date") or "")[:16],
+        )
         result, raw_response = dd.set_record_list(records)
         if result is None:
             logger.warning("Ответ сервера не распознан. raw=\n%s", raw_response)
@@ -919,13 +1033,64 @@ async def _auto_send(query, records: list, cache: dict) -> None:
         else:
             msg = _build_success_message(records, cache)
             await query.edit_message_text(msg, parse_mode="HTML")
+            # Сразу подтянуть следующий новый чек Lidl, если есть в очереди
+            if context and query.from_user:
+                await maybe_push_next_lidl_receipt(context.application, query.from_user.id)
     except Exception as e:
         await query.edit_message_text(f"❌ Ошибка при записи: {e}")
-
+    finally:
+        if context is not None:
+            context.user_data.pop("dd_sending", None)
+            context.user_data.pop("pending_lidl_fingerprint", None)
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
+
+    if query.data == "lidl_old":
+        if not is_allowed(update):
+            return
+        await query.edit_message_text("Загружаю список чеков…")
+        await show_history_menu(
+            context.application,
+            update.effective_user.id,
+            offset=0,
+            edit_message=query.message,
+        )
+        return
+
+    if query.data == "lidl_hx":
+        await query.edit_message_text("Закрыто.")
+        return
+
+    if query.data.startswith("lidl_hp:"):
+        if not is_allowed(update):
+            return
+        try:
+            offset = int(query.data.split(":", 1)[1])
+        except ValueError:
+            await query.edit_message_text("Ошибка листания.")
+            return
+        await query.edit_message_text("Загружаю…")
+        await show_history_menu(
+            context.application,
+            update.effective_user.id,
+            offset=offset,
+            edit_message=query.message,
+        )
+        return
+
+    if query.data.startswith("lidl_hs:"):
+        if not is_allowed(update):
+            return
+        ticket_id = query.data.split(":", 1)[1]
+        await query.edit_message_text(f"Загружаю чек…")
+        await push_selected_history_receipt(
+            context.application,
+            update.effective_user.id,
+            ticket_id,
+        )
+        return
 
     # ── Поиск счёта ───────────────────────────────────────────
     if query.data == "acc_search":
@@ -969,7 +1134,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         else:
             records = context.user_data.pop("pending_records", [])
             context.user_data.pop("pending_warnings", None)
-            await _auto_send(query, records, cache)
+            await _auto_send(query, records, cache, context)
         return
 
     # ── Классификация категорий ───────────────────────────────
@@ -1055,7 +1220,418 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             records = context.user_data.pop("pending_records", [])
             context.user_data.pop("pending_warnings", None)
             context.user_data.pop("classify_queue", None)
-            await _auto_send(query, records, cache)
+            await _auto_send(query, records, cache, context)
+
+
+# ──────────────────────────────────────────────────────────────
+# Lidl Plus: автосинк чеков
+# ──────────────────────────────────────────────────────────────
+
+def _lidl_accounts() -> list[tuple[str, int]]:
+    from lidl_sync import parse_accounts_env
+    return parse_accounts_env(LIDL_ACCOUNTS_RAW)
+
+
+def _lidl_old_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("📦 Разобрать старый чек", callback_data="lidl_old")],
+    ])
+
+
+def _fmt_receipt_btn(summary: dict) -> str:
+    date = str(summary.get("date") or "")[:10] or "?"
+    total = summary.get("totalAmount")
+    total_s = f"{total} zł" if total is not None else "?"
+    return f"{date} · {total_s}"
+
+
+def _history_pick_keyboard(items: list[dict], offset: int, has_more: bool) -> InlineKeyboardMarkup:
+    rows = []
+    for t in items:
+        tid = t.get("id")
+        if not tid:
+            continue
+        rows.append([
+            InlineKeyboardButton(
+                _fmt_receipt_btn(t),
+                callback_data=f"lidl_hs:{tid}",
+            )
+        ])
+    nav = []
+    if offset > 0:
+        prev = max(0, offset - 7)
+        nav.append(InlineKeyboardButton("◀️ Назад", callback_data=f"lidl_hp:{prev}"))
+    if has_more:
+        nav.append(InlineKeyboardButton("Следующие ▶️", callback_data=f"lidl_hp:{offset + 7}"))
+    if nav:
+        rows.append(nav)
+    rows.append([InlineKeyboardButton("✖️ Закрыть", callback_data="lidl_hx")])
+    return InlineKeyboardMarkup(rows)
+
+
+async def _push_receipt_to_user(
+    app,
+    telegram_id: int,
+    receipt,
+    preface: str = "",
+    *,
+    offer_history: bool = True,
+) -> bool:
+    """Отправляет один чек пользователю. False если у него висит незавершённый."""
+    # В PTB 21 app.user_data — MappingProxy (read-only); писать нужно в _user_data
+    ud = app._user_data[telegram_id]
+    if ud.get("pending_records"):
+        await app.bot.send_message(
+            telegram_id,
+            "⏳ Сначала закончи текущий чек (счёт/категории), потом можно брать следующий.",
+        )
+        return False
+
+    header = preface or "🛒 Новый чек из Lidl Plus"
+    meta = []
+    if receipt.date:
+        meta.append(str(receipt.date)[:10])
+    if receipt.total:
+        meta.append(f"{receipt.total} zł")
+    if meta:
+        header += " (" + ", ".join(meta) + ")"
+    await app.bot.send_message(telegram_id, header)
+    ok = await start_lidl_receipt_flow(app.bot, telegram_id, ud, receipt.plain)
+    if ok:
+        from lidl_sync import mark_seen
+        mark_seen(receipt.account_id, receipt.ticket_id)
+        if offer_history:
+            await app.bot.send_message(
+                telegram_id,
+                "Можно углубиться в историю — кнопка внизу чата.",
+                reply_markup=_main_reply_keyboard(),
+            )
+    return ok
+
+
+async def show_history_menu(
+    app,
+    telegram_id: int,
+    *,
+    offset: int = 0,
+    edit_message=None,
+) -> None:
+    """Показать до 7 неразобранных чеков для выбора."""
+    from lidl_sync import account_for_telegram, account_has_token, list_unseen_summaries
+
+    account_id = account_for_telegram(LIDL_ACCOUNTS_RAW, telegram_id)
+    if not account_id:
+        text = "Твой Telegram id не привязан в LIDL_ACCOUNTS (.env)."
+        if edit_message:
+            await edit_message.edit_text(text)
+        else:
+            await app.bot.send_message(telegram_id, text)
+        return
+    if not account_has_token(account_id):
+        text = f"Нет токена Lidl → /lidl_auth {account_id}"
+        if edit_message:
+            await edit_message.edit_text(text)
+        else:
+            await app.bot.send_message(telegram_id, text)
+        return
+
+    ud = app._user_data[telegram_id]
+    if ud.get("pending_records"):
+        text = "⏳ Сначала закончи текущий чек, потом выбирай старый."
+        if edit_message:
+            await edit_message.edit_text(text)
+        else:
+            await app.bot.send_message(telegram_id, text)
+        return
+
+    try:
+        page = list_unseen_summaries(account_id, offset=offset, limit=7)
+    except Exception as e:
+        logger.exception("lidl history menu [%s]", account_id)
+        text = f"Ошибка Lidl: {e}"
+        if edit_message:
+            await edit_message.edit_text(text)
+        else:
+            await app.bot.send_message(telegram_id, text)
+        return
+
+    if not page.items:
+        text = (
+            "✅ Неразобранных чеков больше нет."
+            if offset == 0
+            else "Дальше неразобранных нет. Нажми «Назад» или закрой."
+        )
+        if edit_message:
+            await edit_message.edit_text(
+                text,
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("◀️ Назад", callback_data=f"lidl_hp:{max(0, offset - 7)}")]
+                    if offset > 0 else [InlineKeyboardButton("✖️ Закрыть", callback_data="lidl_hx")]
+                ]),
+            )
+        else:
+            await app.bot.send_message(telegram_id, text, reply_markup=_main_reply_keyboard())
+        return
+
+    n0 = offset + 1
+    n1 = offset + len(page.items)
+    text = (
+        f"📦 Выбери чек для разбора ({n0}–{n1}"
+        + (", есть ещё…" if page.has_more else "")
+        + "):"
+    )
+    kb = _history_pick_keyboard(page.items, offset, page.has_more)
+    if edit_message:
+        await edit_message.edit_text(text, reply_markup=kb)
+    else:
+        await app.bot.send_message(telegram_id, text, reply_markup=kb)
+
+
+async def push_selected_history_receipt(app, telegram_id: int, ticket_id: str) -> None:
+    from lidl_sync import account_for_telegram, account_has_token, fetch_receipt
+
+    account_id = account_for_telegram(LIDL_ACCOUNTS_RAW, telegram_id)
+    if not account_id or not account_has_token(account_id):
+        await app.bot.send_message(telegram_id, "Нет привязки/токена Lidl.")
+        return
+
+    ud = app._user_data[telegram_id]
+    if ud.get("pending_records"):
+        await app.bot.send_message(
+            telegram_id,
+            "⏳ Сначала закончи текущий чек.",
+        )
+        return
+
+    try:
+        receipt = fetch_receipt(account_id, ticket_id)
+    except Exception as e:
+        logger.exception("fetch receipt")
+        await app.bot.send_message(telegram_id, f"Ошибка: {e}")
+        return
+
+    if not receipt:
+        await app.bot.send_message(telegram_id, "Не удалось загрузить чек.")
+        return
+
+    await _push_receipt_to_user(
+        app,
+        telegram_id,
+        receipt,
+        preface="📦 Старый чек из Lidl Plus",
+        offer_history=True,
+    )
+
+
+async def maybe_push_next_lidl_receipt(app, telegram_id: int) -> None:
+    """
+    После успешного разбора чека: если у аккаунта есть новые непрочитанные —
+    сразу отправить один следующий (не ждать часового синка).
+    """
+    from lidl_sync import account_for_telegram, account_has_token, collect_new_receipts
+
+    account_id = account_for_telegram(LIDL_ACCOUNTS_RAW, telegram_id)
+    if not account_id or not account_has_token(account_id):
+        return
+
+    ud = app._user_data[telegram_id]
+    if ud.get("pending_records"):
+        return
+
+    try:
+        receipts = collect_new_receipts(account_id, max_new=1)
+    except Exception:
+        logger.exception("Lidl immediate next [%s]", account_id)
+        return
+
+    if not receipts:
+        return
+
+    r = receipts[0]
+    logger.info("Lidl [%s]: сразу следующий чек %s", account_id, r.ticket_id)
+    await _push_receipt_to_user(
+        app,
+        telegram_id,
+        r,
+        preface="🛒 Следующий чек из Lidl Plus",
+        offer_history=True,
+    )
+
+
+async def push_history_receipt_for_user(app, telegram_id: int) -> None:
+    """Совместимость: открыть меню выбора старых чеков."""
+    await show_history_menu(app, telegram_id, offset=0)
+
+
+async def run_lidl_sync(app, *, notify_chat_id: int | None = None) -> None:
+    """Прогон синка по всем аккаунтам из LIDL_ACCOUNTS."""
+    from lidl_sync import account_has_token, collect_new_receipts
+
+    accounts = _lidl_accounts()
+    if not accounts:
+        msg = "LIDL_ACCOUNTS не задан в .env (формат: me:TELEGRAM_ID,wife:TELEGRAM_ID)"
+        logger.warning(msg)
+        if notify_chat_id:
+            await app.bot.send_message(notify_chat_id, msg)
+        return
+
+    lines_status = []
+    for account_id, telegram_id in accounts:
+        if not account_has_token(account_id):
+            tip = f"[{account_id}] нет токена → /lidl_auth {account_id}"
+            lines_status.append(tip)
+            try:
+                await app.bot.send_message(telegram_id, f"⚠️ Lidl: {tip}")
+            except Exception:
+                logger.exception("Не удалось написать %s", telegram_id)
+            continue
+        try:
+            receipts = collect_new_receipts(account_id)
+        except Exception as e:
+            logger.exception("Lidl sync [%s]", account_id)
+            err = f"[{account_id}] ошибка: {e}"
+            lines_status.append(err)
+            try:
+                await app.bot.send_message(
+                    telegram_id,
+                    f"⚠️ Lidl sync: {e}\nЕсли про токен — сделай /lidl_auth {account_id}",
+                )
+            except Exception:
+                pass
+            continue
+
+        if not receipts:
+            lines_status.append(f"[{account_id}] новых нет")
+            continue
+
+        sent = 0
+        for r in receipts:
+            ok = await _push_receipt_to_user(app, telegram_id, r)
+            if ok:
+                sent += 1
+            else:
+                break  # pending — остальные завтра
+        lines_status.append(f"[{account_id}] отправлено {sent}/{len(receipts)}")
+
+    summary = "Lidl sync: " + "; ".join(lines_status)
+    logger.info(summary)
+    if notify_chat_id:
+        await app.bot.send_message(notify_chat_id, summary)
+
+
+async def lidl_daily_job(context: ContextTypes.DEFAULT_TYPE) -> None:
+    await run_lidl_sync(context.application)
+
+
+async def cmd_lidl_sync(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not is_allowed(update):
+        return
+    await update.message.reply_text("Синхронизирую Lidl…")
+    await run_lidl_sync(context.application, notify_chat_id=update.effective_chat.id)
+
+
+async def cmd_lidl_status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not is_allowed(update):
+        return
+    from lidl_sync import account_has_token, load_seen
+
+    accounts = _lidl_accounts()
+    seen = load_seen()
+    if not accounts:
+        await update.message.reply_text("LIDL_ACCOUNTS пуст в .env")
+        return
+    lines = [
+        f"Синк: каждые {LIDL_SYNC_INTERVAL_HOURS:g} ч ({LIDL_SYNC_TZ})",
+    ]
+    for aid, tid in accounts:
+        tok = "токен ✓" if account_has_token(aid) else "нет токена"
+        n = len(seen.get(aid, []))
+        lines.append(f"• <code>{aid}</code> → TG {tid}: {tok}, разобрано={n}")
+    lines.append("\n📦 Старые чеки — кнопка внизу или /lidl_old")
+    await update.message.reply_text(
+        "\n".join(lines),
+        parse_mode="HTML",
+        reply_markup=_main_reply_keyboard(),
+    )
+
+
+async def cmd_lidl_old(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not is_allowed(update):
+        return
+    await update.message.reply_text("Загружаю список чеков…")
+    await show_history_menu(context.application, update.effective_user.id, offset=0)
+
+
+async def cmd_lidl_auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not is_allowed(update):
+        return
+    from lidl_client import build_login_url, exchange_code, extract_code, save_tokens
+    from pathlib import Path
+    import json as _json
+
+    args = context.args or []
+    if not args:
+        await update.message.reply_text(
+            "Использование:\n"
+            "  /lidl_auth me\n"
+            "  /lidl_auth me <callback_url_или_code>\n"
+            "Сначала без code — получишь ссылку для Chrome."
+        )
+        return
+
+    account_id = args[0].strip()
+    pkce_path = Path(__file__).resolve().parent / "data" / "lidl_tokens" / f"{account_id}.pkce.json"
+
+    if len(args) == 1:
+        url, verifier = build_login_url(country="PL", language="pl")
+        pkce_path.parent.mkdir(parents=True, exist_ok=True)
+        pkce_path.write_text(
+            _json.dumps({"code_verifier": verifier, "country": "PL", "language": "pl"}),
+            encoding="utf-8",
+        )
+        context.user_data["lidl_auth_account"] = account_id
+        await update.message.reply_text(
+            f"Открой в <b>Chrome</b>:\n{url}\n\n"
+            "После логина страница «не откроется» — скопируй адрес "
+            "<code>com.lidlplus.app://callback?code=...</code> "
+            "и пришли следующим сообщением или:\n"
+            f"/lidl_auth {account_id} CODE",
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+        )
+        return
+
+    # code / callback в аргументах
+    pasted = " ".join(args[1:])
+    if not pkce_path.exists():
+        await update.message.reply_text(f"Сначала: /lidl_auth {account_id}")
+        return
+    try:
+        pkce = _json.loads(pkce_path.read_text(encoding="utf-8"))
+        code = extract_code(pasted)
+        tokens = exchange_code(code, pkce["code_verifier"])
+        path = save_tokens(
+            account_id,
+            tokens,
+            keep={"country": "PL", "language": "pl"},
+        )
+        pkce_path.unlink(missing_ok=True)
+        context.user_data.pop("lidl_auth_account", None)
+        await update.message.reply_text(f"OK: токен сохранён ({path.name}). Можно /lidl_sync")
+    except Exception as e:
+        await update.message.reply_text(f"Ошибка обмена code: {e}")
+
+
+# перехват callback URL после /lidl_auth
+async def _maybe_lidl_auth_paste(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str) -> bool:
+    account_id = context.user_data.get("lidl_auth_account")
+    if not account_id:
+        return False
+    if "code=" not in text and "com.lidlplus.app://" not in text:
+        return False
+    context.args = [account_id, text]
+    await cmd_lidl_auth(update, context)
+    return True
 
 
 # ──────────────────────────────────────────────────────────────
@@ -1073,8 +1649,36 @@ def main() -> None:
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", cmd_start))
+    app.add_handler(CommandHandler("lidl_sync", cmd_lidl_sync))
+    app.add_handler(CommandHandler("lidl_status", cmd_lidl_status))
+    app.add_handler(CommandHandler("lidl_old", cmd_lidl_old))
+    app.add_handler(CommandHandler("lidl_auth", cmd_lidl_auth))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_entry))
     app.add_handler(CallbackQueryHandler(handle_callback))
+
+    # Ежедневный синк Lidl
+    if app.job_queue is None:
+        logger.warning(
+            "JobQueue недоступен — поставь python-telegram-bot[job-queue]. "
+            "Автосинк Lidl отключён, остаётся /lidl_sync."
+        )
+    elif _lidl_accounts():
+        try:
+            seconds = max(300, int(LIDL_SYNC_INTERVAL_HOURS * 3600))
+            app.job_queue.run_repeating(
+                lidl_daily_job,
+                interval=seconds,
+                first=60,  # первый прогон через минуту после старта
+                name="lidl_hourly_sync",
+            )
+            logger.info(
+                "Lidl sync: каждые %g ч (первый через 60с)",
+                LIDL_SYNC_INTERVAL_HOURS,
+            )
+        except Exception:
+            logger.exception("Не удалось запланировать Lidl sync")
+    else:
+        logger.info("LIDL_ACCOUNTS пуст — ежедневный синк не включён")
 
     logger.info("Бот запущен.")
     app.run_polling()

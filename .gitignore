@@ -5,6 +5,7 @@
 my_account_data.json
 bot.log
 rules.json
+data/
 
 # Временные и тестовые файлы
 _find_category.py

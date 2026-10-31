@@ -39,8 +39,23 @@ DD_DEFAULT_CURRENCY=PLN         # валюта по умолчанию (ISO-ко
 | Команда | Действие |
 |---|---|
 | `/start` | Показывает твой Telegram ID |
+| `/lidl_auth me` | Одноразовый логин Lidl Plus (Chrome) для аккаунта |
+| `/lidl_sync` | Проверить новые чеки сейчас |
+| `/lidl_old` | Меню: выбрать старый чек из списка (по 7) |
+| `/lidl_status` | Статус токенов и расписания |
 
 Всё остальное — просто отправь текст чека.
+
+### Автосинк Lidl Plus
+
+Раз в час бот забирает новые чеки из Lidl Plus и присылает их в Telegram — дальше тот же сценарий (счёт → категории).
+
+1. В `.env` задай `LIDL_ACCOUNTS=me:ТВОЙ_TG_ID,wife:TG_ID_ЖЕНЫ`
+2. `pip install -r requirements.txt` (нужен `job-queue`)
+3. Для каждого аккаунта один раз: `/lidl_auth me` (или `wife`) → логин в Chrome → прислать callback URL
+4. Автосинк отдаёт только **новые** чеки; старые — по кнопке «Разобрать старый чек» или `/lidl_old` (по одному, с пометкой seen)
+
+Токены лежат в `data/lidl_tokens/` (не коммитить). Refresh-токен сам обновляется; если протухнет после долгого простоя — снова `/lidl_auth`.
 
 ## Структура проекта
 
@@ -49,6 +64,9 @@ paragon_bot/
 ├── paragon_bot.py        — Telegram-бот (python-telegram-bot v21)
 ├── drebedengi_api.py     — SOAP-клиент (сырой XML, без zeep/suds)
 ├── lidl_parser.py        — Парсер чеков Lidl (Польша)
+├── lidl_client.py        — Lidl Plus OAuth + tickets API
+├── lidl_html.py          — HTML чека → текст для парсера
+├── lidl_sync.py          — дедуп seen-id + сбор новых чеков
 ├── rules.py              — Применение правил keyword → категория
 ├── rules.json.example    — Шаблон правил (скопируй в rules.json)
 ├── rules.json            — Твои правила (не коммитить, создаётся автоматически)

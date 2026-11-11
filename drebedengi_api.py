@@ -279,11 +279,23 @@ class DrebedengiClient:
 
     # ── Транзакции ─────────────────────────────────────────────
 
-    def get_record_list(self, period: int = 8, what: int = 6) -> list[dict]:
+    def get_record_list(
+        self,
+        period: int = 8,
+        what: int = 6,
+        *,
+        period_from: str | None = None,
+        period_to: str | None = None,
+    ) -> list[dict]:
         """
-        period: 1=этот месяц, 2=прошлый, 7=сегодня, 8=последние 20
+        period: 1=этот месяц, 2=прошлый, 7=сегодня, 8=последние 20, 0=произвольный
+               (нужны period_from / period_to в формате YYYY-MM-DD)
         what: 2=доходы, 3=расходы, 4=переводы, 6=все
+
+        Возвращает плоский список записей (dict), даже если SOAP отдал Map id→record.
         """
+        if period_from and period_to:
+            period = 0
         params = {
             "is_report": False,
             "is_show_duty": True,
@@ -294,14 +306,16 @@ class DrebedengiClient:
             "r_is_place": 0,
             "r_is_tag": 0,
         }
+        if period == 0:
+            if not period_from or not period_to:
+                raise ValueError("Для r_period=0 нужны period_from и period_to")
+            params["period_from"] = period_from
+            params["period_to"] = period_to
         inner = self._a() + _map("params", params) + _null("idList")
         xml = _envelope("getRecordList", inner)
         body, _ = _call(xml)
         result = _parse_response(body, "getRecordListReturn")
-        if result is None or result == "" or result == []:
-            return []
-        raw = result if isinstance(result, list) else [result]
-        return [r for r in raw if r is not None and r != ""]
+        return _flatten_records(result)
 
     def set_record_list(self, records: list[dict]) -> list:
         """
@@ -352,6 +366,56 @@ class DrebedengiClient:
         body, _ = _call(xml)
         result = _parse_response(body, "parseTextDataReturn")
         return result if isinstance(result, list) else ([] if result is None else [result])
+
+    def delete_object(self, obj_id: str | int, typ: str = "waste") -> object:
+        """
+        Удаляет объект/транзакцию.
+        typ для транзакций: waste | income | move | change
+        (для справочников — object).
+        Успех обычно = 1.
+        """
+        inner = (
+            self._a()
+            + f'<id xsi:type="xsd:string">{escape(str(obj_id))}</id>'
+            + f'<type xsi:type="xsd:string">{escape(typ)}</type>'
+        )
+        xml = _envelope("deleteObject", inner)
+        body, raw_text = _call(xml, log_response=True)
+        result = _parse_response(body, "deleteObjectReturn")
+        if result is None:
+            _api_logger.warning("deleteObject: не удалось разобрать ответ. raw=\n%s", raw_text)
+        return result
+
+
+def _flatten_records(result) -> list[dict]:
+    """SOAP getRecordList иногда отдаёт Map {id: record} внутри списка."""
+    if result is None or result == "" or result == []:
+        return []
+    raw = result if isinstance(result, list) else [result]
+    out: list[dict] = []
+    for item in raw:
+        if item is None or item == "":
+            continue
+        if isinstance(item, dict) and "operation_date" in item:
+            out.append(item)
+            continue
+        if isinstance(item, dict):
+            vals = list(item.values())
+            if vals and all(isinstance(v, dict) and "operation_date" in v for v in vals):
+                out.extend(vals)
+                continue
+        if isinstance(item, dict):
+            out.append(item)
+    return out
+
+
+# operation_type → deleteObject type
+DELETE_TYPE_BY_OPERATION = {
+    2: "income",
+    3: "waste",
+    4: "move",
+    5: "change",
+}
 
 
 # ──────────────────────────────────────────────────────────────

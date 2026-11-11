@@ -13,7 +13,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
@@ -26,7 +26,7 @@ from telegram.ext import (
     filters,
 )
 
-from drebedengi_api import DrebedengiClient
+from drebedengi_api import DELETE_TYPE_BY_OPERATION, DrebedengiClient
 from rules import apply_rules
 
 load_dotenv()
@@ -452,7 +452,7 @@ def _cat_emoji(cat_name: str) -> str:
     return "🏷"
 
 
-def _build_success_message(records: list, cache: dict) -> str:
+def _build_success_message(records: list, cache: dict, *, extra_lines: list[str] | None = None) -> str:
     """Формирует итоговое сообщение после успешной записи: по категориям."""
     from collections import defaultdict
 
@@ -502,8 +502,165 @@ def _build_success_message(records: list, cache: dict) -> str:
     lines.append("─" * 21)
     lines.append(f"<b>Итого: {total:.2f} {cur_code}</b>")
     lines.append(f"💳 {place_name}")
+    if extra_lines:
+        lines.append("")
+        lines.extend(extra_lines)
 
     return "\n".join(lines)
+
+
+def _is_lidl_itemized_records(records: list) -> bool:
+    """True если это разобранный чек Lidl (позиции с тегом [LIDL])."""
+    if not records:
+        return False
+    tagged = sum(1 for r in records if str(r.get("comment") or "").startswith("[LIDL]"))
+    return tagged >= max(1, len(records) // 2)
+
+
+def _is_unparsed_lidl_avtovvod(record: dict) -> bool:
+    """
+    Неразобранный автоввод Lidl из банка/карты.
+    Примеры: «[Автоввод] [LIDL]», «[Автоввод] Kwota … LIDL …».
+    Не путать с позициями чека «[LIDL] Banany…».
+    """
+    comment = str(record.get("comment") or "")
+    if "Автоввод" not in comment:
+        return False
+    if "LIDL" not in comment.upper():
+        return False
+    # позиция разобранного чека
+    if comment.startswith("[LIDL]"):
+        return False
+    try:
+        if int(record.get("operation_type") or 0) != 3:
+            return False
+    except (TypeError, ValueError):
+        return False
+    # у автоввода обычно нет group_id
+    gid = record.get("group_id")
+    if gid not in (None, "", "None", 0, "0"):
+        return False
+    return True
+
+
+def find_unparsed_lidl_expense(
+    total_minor: int,
+    operation_date: str,
+    *,
+    place_id=None,
+    currency_id=None,
+    day_slack: int = 3,
+) -> dict | None:
+    """
+    Ищет ровно один автоввод Lidl с той же суммой около даты чека.
+    При неоднозначности — None (лучше не удалить, чем удалить чужое).
+    """
+    if total_minor <= 0 or not operation_date:
+        return None
+    try:
+        day = datetime.strptime(operation_date[:10], "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+    period_from = (day - timedelta(days=day_slack)).isoformat()
+    period_to = (day + timedelta(days=day_slack)).isoformat()
+    try:
+        rows = dd.get_record_list(
+            period=0,
+            what=3,
+            period_from=period_from,
+            period_to=period_to,
+        )
+    except Exception:
+        logger.exception("Не удалось получить записи для поиска автоввода Lidl")
+        return None
+
+    want = abs(int(total_minor))
+    candidates = []
+    for r in rows:
+        if not _is_unparsed_lidl_avtovvod(r):
+            continue
+        try:
+            summ = abs(int(r.get("sum") or 0))
+        except (TypeError, ValueError):
+            continue
+        if summ != want:
+            continue
+        if currency_id is not None and str(r.get("currency_id")) != str(currency_id):
+            continue
+        candidates.append(r)
+
+    if not candidates:
+        return None
+
+    def score(r: dict) -> tuple:
+        try:
+            rd = datetime.strptime(str(r.get("operation_date") or "")[:10], "%Y-%m-%d").date()
+            day_dist = abs((rd - day).days)
+        except ValueError:
+            day_dist = 99
+        place_penalty = 0 if (place_id is None or str(r.get("place_id")) == str(place_id)) else 1
+        return (day_dist, place_penalty, str(r.get("id")))
+
+    candidates.sort(key=score)
+    best = candidates[0]
+    best_score = score(best)[:2]
+    # если два с одинаковой «близостью» — не рискуем
+    ties = [c for c in candidates if score(c)[:2] == best_score]
+    if len(ties) > 1:
+        logger.warning(
+            "Несколько автовводов Lidl на сумму %s около %s — пропуск удаления: %s",
+            want,
+            operation_date[:10],
+            [t.get("id") for t in ties],
+        )
+        return None
+    return best
+
+
+def delete_matching_lidl_avtovvod(records: list) -> str | None:
+    """
+    После записи разобранного чека удаляет совпавший автоввод.
+    Возвращает короткую строку для сообщения или None.
+    """
+    if not _is_lidl_itemized_records(records):
+        return None
+
+    total_minor = sum(abs(int(r.get("sum") or 0)) for r in records)
+    op_date = str(records[0].get("operation_date") or "")
+    place_id = records[0].get("place_id")
+    currency_id = records[0].get("currency_id")
+
+    match = find_unparsed_lidl_expense(
+        total_minor,
+        op_date,
+        place_id=place_id,
+        currency_id=currency_id,
+    )
+    if not match:
+        logger.info(
+            "Автоввод Lidl на сумму %s (%s) не найден — нечего удалять",
+            total_minor,
+            op_date[:10],
+        )
+        return None
+
+    sid = match.get("id")
+    typ = DELETE_TYPE_BY_OPERATION.get(int(match.get("operation_type") or 3), "waste")
+    try:
+        result = dd.delete_object(sid, typ)
+    except Exception as e:
+        logger.exception("deleteObject автоввода Lidl id=%s", sid)
+        return f"⚠️ Не удалось удалить автоввод (id {sid}): {e}"
+
+    ok = result in (1, "1", True)
+    amount = abs(int(match.get("sum") or 0)) / 100
+    comment = str(match.get("comment") or "")[:60]
+    if ok:
+        logger.info("Удалён автоввод Lidl id=%s sum=%s comment=%s", sid, amount, comment)
+        return f"🗑 Удалён автоввод {amount:.2f} (id {sid})"
+    logger.warning("deleteObject id=%s вернул %r", sid, result)
+    return f"⚠️ Автоввод id {sid} не удалён (ответ: {result})"
 
 
 
@@ -1031,7 +1188,15 @@ async def _auto_send(query, records: list, cache: dict, context: ContextTypes.DE
                 parse_mode="HTML",
             )
         else:
-            msg = _build_success_message(records, cache)
+            extra: list[str] = []
+            try:
+                deleted = delete_matching_lidl_avtovvod(records)
+                if deleted:
+                    extra.append(deleted)
+            except Exception:
+                logger.exception("Ошибка при удалении автоввода Lidl")
+                extra.append("⚠️ Ошибка при удалении автоввода Lidl")
+            msg = _build_success_message(records, cache, extra_lines=extra or None)
             await query.edit_message_text(msg, parse_mode="HTML")
             # Сразу подтянуть следующий новый чек Lidl, если есть в очереди
             if context and query.from_user:

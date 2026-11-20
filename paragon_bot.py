@@ -13,7 +13,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
@@ -519,16 +519,12 @@ def _is_lidl_itemized_records(records: list) -> bool:
 
 def _is_unparsed_lidl_avtovvod(record: dict) -> bool:
     """
-    Неразобранный автоввод Lidl из банка/карты.
-    Примеры: «[Автоввод] [LIDL]», «[Автоввод] Kwota … LIDL …».
-    Не путать с позициями чека «[LIDL] Banany…».
+    Неразобранный автоввод (тег «Автоввод» в комментарии).
+    Не путать с позициями разобранного чека «[LIDL] Banany…».
     """
     comment = str(record.get("comment") or "")
     if "Автоввод" not in comment:
         return False
-    if "LIDL" not in comment.upper():
-        return False
-    # позиция разобранного чека
     if comment.startswith("[LIDL]"):
         return False
     try:
@@ -536,7 +532,6 @@ def _is_unparsed_lidl_avtovvod(record: dict) -> bool:
             return False
     except (TypeError, ValueError):
         return False
-    # у автоввода обычно нет group_id
     gid = record.get("group_id")
     if gid not in (None, "", "None", 0, "0"):
         return False
@@ -549,11 +544,10 @@ def find_unparsed_lidl_expense(
     *,
     place_id=None,
     currency_id=None,
-    day_slack: int = 3,
 ) -> dict | None:
     """
-    Ищет ровно один автоввод Lidl с той же суммой около даты чека.
-    При неоднозначности — None (лучше не удалить, чем удалить чужое).
+    Ищет автоввод: тот же день + та же сумма + тег «Автоввод».
+    Если таких несколько — не удаляем.
     """
     if total_minor <= 0 or not operation_date:
         return None
@@ -562,14 +556,13 @@ def find_unparsed_lidl_expense(
     except ValueError:
         return None
 
-    period_from = (day - timedelta(days=day_slack)).isoformat()
-    period_to = (day + timedelta(days=day_slack)).isoformat()
+    day_s = day.isoformat()
     try:
         rows = dd.get_record_list(
             period=0,
             what=3,
-            period_from=period_from,
-            period_to=period_to,
+            period_from=day_s,
+            period_to=day_s,
         )
     except Exception:
         logger.exception("Не удалось получить записи для поиска автоввода Lidl")
@@ -581,62 +574,39 @@ def find_unparsed_lidl_expense(
         if not _is_unparsed_lidl_avtovvod(r):
             continue
         try:
+            rd = str(r.get("operation_date") or "")[:10]
             summ = abs(int(r.get("sum") or 0))
         except (TypeError, ValueError):
             continue
-        if summ != want:
-            continue
-        if currency_id is not None and str(r.get("currency_id")) != str(currency_id):
+        if rd != day_s or summ != want:
             continue
         candidates.append(r)
 
     if not candidates:
         return None
-
-    def score(r: dict) -> tuple:
-        try:
-            rd = datetime.strptime(str(r.get("operation_date") or "")[:10], "%Y-%m-%d").date()
-            day_dist = abs((rd - day).days)
-        except ValueError:
-            day_dist = 99
-        place_penalty = 0 if (place_id is None or str(r.get("place_id")) == str(place_id)) else 1
-        return (day_dist, place_penalty, str(r.get("id")))
-
-    candidates.sort(key=score)
-    best = candidates[0]
-    best_score = score(best)[:2]
-    # если два с одинаковой «близостью» — не рискуем
-    ties = [c for c in candidates if score(c)[:2] == best_score]
-    if len(ties) > 1:
+    if len(candidates) > 1:
         logger.warning(
-            "Несколько автовводов Lidl на сумму %s около %s — пропуск удаления: %s",
+            "Несколько автовводов на сумму %s за %s — пропуск удаления: %s",
             want,
-            operation_date[:10],
-            [t.get("id") for t in ties],
+            day_s,
+            [c.get("id") for c in candidates],
         )
         return None
-    return best
+    return candidates[0]
 
 
 def delete_matching_lidl_avtovvod(records: list) -> str | None:
     """
-    После записи разобранного чека удаляет совпавший автоввод.
-    Возвращает короткую строку для сообщения или None.
+    После записи разобранного чека удаляет совпавший автоввод
+    (день = день, сумма = сумма, есть тег «Автоввод»).
     """
     if not _is_lidl_itemized_records(records):
         return None
 
     total_minor = sum(abs(int(r.get("sum") or 0)) for r in records)
     op_date = str(records[0].get("operation_date") or "")
-    place_id = records[0].get("place_id")
-    currency_id = records[0].get("currency_id")
 
-    match = find_unparsed_lidl_expense(
-        total_minor,
-        op_date,
-        place_id=place_id,
-        currency_id=currency_id,
-    )
+    match = find_unparsed_lidl_expense(total_minor, op_date)
     if not match:
         logger.info(
             "Автоввод Lidl на сумму %s (%s) не найден — нечего удалять",
@@ -1439,8 +1409,6 @@ async def _push_receipt_to_user(
     telegram_id: int,
     receipt,
     preface: str = "",
-    *,
-    offer_history: bool = True,
 ) -> bool:
     """Отправляет один чек пользователю. False если у него висит незавершённый."""
     # В PTB 21 app.user_data — MappingProxy (read-only); писать нужно в _user_data
@@ -1465,12 +1433,6 @@ async def _push_receipt_to_user(
     if ok:
         from lidl_sync import mark_seen
         mark_seen(receipt.account_id, receipt.ticket_id)
-        if offer_history:
-            await app.bot.send_message(
-                telegram_id,
-                "Можно углубиться в историю — кнопка внизу чата.",
-                reply_markup=_main_reply_keyboard(),
-            )
     return ok
 
 
@@ -1584,7 +1546,6 @@ async def push_selected_history_receipt(app, telegram_id: int, ticket_id: str) -
         telegram_id,
         receipt,
         preface="📦 Старый чек из Lidl Plus",
-        offer_history=True,
     )
 
 
@@ -1619,7 +1580,6 @@ async def maybe_push_next_lidl_receipt(app, telegram_id: int) -> None:
         telegram_id,
         r,
         preface="🛒 Следующий чек из Lidl Plus",
-        offer_history=True,
     )
 
 

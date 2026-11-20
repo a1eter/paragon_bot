@@ -114875,3 +114875,403 @@ telegram.error.TimedOut: Timed out
 2026-11-11 17:35:30,497 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
 2026-11-11 17:35:30,497 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 17:35:26 UTC)" executed successfully
 2026-11-11 17:37:31,361 [INFO] paragon_bot: Удалён автоввод Lidl id=262548952 sum=45.67 comment=[Автоввод] [LIDL]
+2026-11-11 18:17:01,565 [INFO] __main__: Загружаю справочники из Drebedengi...
+2026-11-11 18:17:08,357 [INFO] __main__: Кэш загружен: 22 валют, 116 категорий, 113 счетов
+2026-11-11 18:17:11,463 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-11-11 18:17:11,463 [INFO] __main__: Lidl sync: каждые 1 ч (первый через 60с)
+2026-11-11 18:17:11,463 [INFO] __main__: Бот запущен.
+2026-11-11 18:17:11,805 [INFO] apscheduler.scheduler: Added job "lidl_hourly_sync" to job store "default"
+2026-11-11 18:17:11,805 [INFO] apscheduler.scheduler: Scheduler started
+2026-11-11 18:17:11,805 [INFO] telegram.ext.Application: Application started
+2026-11-11 18:18:11,474 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 18:18:11 UTC)" (scheduled at 2026-11-11 17:18:11.461350+00:00)
+2026-11-11 18:18:13,299 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-11 18:18:15,601 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 18:18:15,603 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-11 18:18:15,603 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 18:18:11 UTC)" executed successfully
+2026-11-11 19:18:11,481 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 19:18:11 UTC)" (scheduled at 2026-11-11 18:18:11.461350+00:00)
+2026-11-11 19:18:13,187 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-11 19:18:15,598 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 19:18:15,600 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-11 19:18:15,600 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 19:18:11 UTC)" executed successfully
+2026-11-11 20:18:11,472 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 20:18:11 UTC)" (scheduled at 2026-11-11 19:18:11.461350+00:00)
+2026-11-11 20:18:12,652 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-11 20:18:14,114 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 20:18:14,114 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-11 20:18:14,116 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 20:18:11 UTC)" executed successfully
+2026-11-11 20:43:57,032 [INFO] __main__: DD set_record_list: 11 записей, group=1288369614, date=2026-08-18 19:00
+2026-11-11 20:44:00,804 [INFO] __main__: Удалён автоввод Lidl id=258460638 sum=75.51 comment=Wydano 75,51 zł Saldo PLN: 732,06 zł Lidl Milka com.revolut.
+2026-11-11 20:44:01,905 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 20:59:23,691 [INFO] __main__: DD set_record_list: 8 записей, group=1918396294, date=2026-09-03 18:01
+2026-11-11 20:59:26,902 [INFO] __main__: Удалён автоввод Lidl id=259264473 sum=57.76 comment=[Автоввод] [LIDL]
+2026-11-11 20:59:27,597 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 21:00:08,276 [INFO] __main__: Правило сохранено: pepsi cream,trusk. → Продукты питания и напитки
+2026-11-11 21:00:08,276 [INFO] __main__: DD set_record_list: 5 записей, group=1123934753, date=2026-09-01 15:09
+2026-11-11 21:00:10,971 [INFO] __main__: Автоввод Lidl на сумму 2257 (2026-09-01) не найден — нечего удалять
+2026-11-11 21:00:11,950 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 21:03:57,788 [INFO] __main__: DD set_record_list: 20 записей, group=1012836169, date=2026-08-26 08:52
+2026-11-11 21:04:00,209 [INFO] __main__: Автоввод Lidl на сумму 12583 (2026-08-26) не найден — нечего удалять
+2026-11-11 21:04:01,290 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 21:06:47,444 [INFO] __main__: Правило сохранено: krzew.hebe rośl.ż. → Домашняя живность и цветы
+2026-11-11 21:07:01,415 [INFO] __main__: Правило сохранено: aster3kolor.rośl.ż. → Домашняя живность и цветы
+2026-11-11 21:07:14,603 [INFO] __main__: Правило сохранено: celozja maxi → Домашняя живность и цветы
+2026-11-11 21:07:14,603 [INFO] __main__: DD set_record_list: 4 записей, group=1692371222, date=2026-08-19 10:32
+2026-11-11 21:07:17,075 [INFO] __main__: Автоввод Lidl на сумму 5871 (2026-08-19) не найден — нечего удалять
+2026-11-11 21:07:17,947 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 21:08:46,983 [INFO] __main__: DD set_record_list: 5 записей, group=1795763082, date=2026-08-14 11:17
+2026-11-11 21:08:48,933 [INFO] __main__: Автоввод Lidl на сумму 12699 (2026-08-14) не найден — нечего удалять
+2026-11-11 21:08:49,691 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 21:18:11,472 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 21:18:11 UTC)" (scheduled at 2026-11-11 20:18:11.461350+00:00)
+2026-11-11 21:18:12,633 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-11 21:18:13,261 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 21:18:13,261 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-11 21:18:13,261 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 21:18:11 UTC)" executed successfully
+2026-11-11 22:18:11,476 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 22:18:11 UTC)" (scheduled at 2026-11-11 21:18:11.461350+00:00)
+2026-11-11 22:18:12,516 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-11 22:18:13,973 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 22:18:13,973 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-11 22:18:13,973 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 22:18:11 UTC)" executed successfully
+2026-11-11 23:18:11,481 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 23:18:11 UTC)" (scheduled at 2026-11-11 22:18:11.461350+00:00)
+2026-11-11 23:18:13,287 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-11 23:18:15,067 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-11 23:18:15,067 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-11 23:18:15,067 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-11 23:18:11 UTC)" executed successfully
+2026-11-12 00:18:11,482 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 00:18:11 UTC)" (scheduled at 2026-11-11 23:18:11.461350+00:00)
+2026-11-12 00:18:14,144 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 00:18:17,151 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 00:18:17,151 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 00:18:17,151 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 00:18:11 UTC)" executed successfully
+2026-11-12 01:18:11,474 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 01:18:11 UTC)" (scheduled at 2026-11-12 00:18:11.461350+00:00)
+2026-11-12 01:18:34,745 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 01:18:58,488 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 01:18:58,488 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 01:18:58,488 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 01:18:11 UTC)" executed successfully
+2026-11-12 02:18:11,473 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 02:18:11 UTC)" (scheduled at 2026-11-12 01:18:11.461350+00:00)
+2026-11-12 02:18:12,628 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 02:18:13,546 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 02:18:13,546 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 02:18:13,546 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 02:18:11 UTC)" executed successfully
+2026-11-12 03:18:11,476 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 03:18:11 UTC)" (scheduled at 2026-11-12 02:18:11.461350+00:00)
+2026-11-12 03:18:12,593 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 03:18:14,290 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 03:18:14,290 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 03:18:14,290 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 03:18:11 UTC)" executed successfully
+2026-11-12 04:18:11,473 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 04:18:11 UTC)" (scheduled at 2026-11-12 03:18:11.461350+00:00)
+2026-11-12 04:18:12,471 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 04:18:13,549 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 04:18:13,549 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 04:18:13,549 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 04:18:11 UTC)" executed successfully
+2026-11-12 05:18:11,467 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 05:18:11 UTC)" (scheduled at 2026-11-12 04:18:11.461350+00:00)
+2026-11-12 05:18:12,653 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 05:18:13,715 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 05:18:13,715 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 05:18:13,715 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 05:18:11 UTC)" executed successfully
+2026-11-12 06:18:11,478 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 06:18:11 UTC)" (scheduled at 2026-11-12 05:18:11.461350+00:00)
+2026-11-12 06:18:12,774 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 06:18:14,112 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 06:18:14,114 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 06:18:14,114 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 06:18:11 UTC)" executed successfully
+2026-11-12 07:18:11,468 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 07:18:11 UTC)" (scheduled at 2026-11-12 06:18:11.461350+00:00)
+2026-11-12 07:18:12,401 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 07:18:13,900 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 07:18:13,900 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 07:18:13,900 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 07:18:11 UTC)" executed successfully
+2026-11-12 08:18:11,472 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 08:18:11 UTC)" (scheduled at 2026-11-12 07:18:11.461350+00:00)
+2026-11-12 08:18:13,477 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 08:18:15,668 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 08:18:15,668 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 08:18:15,668 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 08:18:11 UTC)" executed successfully
+2026-11-12 09:18:11,479 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 09:18:11 UTC)" (scheduled at 2026-11-12 08:18:11.461350+00:00)
+2026-11-12 09:18:13,195 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 09:18:15,422 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 09:18:15,422 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 09:18:15,422 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 09:18:11 UTC)" executed successfully
+2026-11-12 10:18:11,476 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 10:18:11 UTC)" (scheduled at 2026-11-12 09:18:11.461350+00:00)
+2026-11-12 10:18:12,794 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 10:18:14,054 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 10:18:14,054 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 10:18:14,054 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 10:18:11 UTC)" executed successfully
+2026-11-12 11:18:11,482 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 11:18:11 UTC)" (scheduled at 2026-11-12 10:18:11.461350+00:00)
+2026-11-12 11:18:14,057 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 11:18:16,776 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 11:18:16,776 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 11:18:16,776 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 11:18:11 UTC)" executed successfully
+2026-11-12 12:18:11,482 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 12:18:11 UTC)" (scheduled at 2026-11-12 11:18:11.461350+00:00)
+2026-11-12 12:18:13,520 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 12:18:16,198 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 12:18:16,198 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 12:18:16,198 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 12:18:11 UTC)" executed successfully
+2026-11-12 13:18:11,478 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 13:18:11 UTC)" (scheduled at 2026-11-12 12:18:11.461350+00:00)
+2026-11-12 13:18:13,451 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 13:18:15,986 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 13:18:15,986 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 13:18:15,986 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 13:18:11 UTC)" executed successfully
+2026-11-12 14:18:11,491 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 14:18:11 UTC)" (scheduled at 2026-11-12 13:18:11.461350+00:00)
+2026-11-12 14:18:13,560 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 14:18:15,765 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 14:18:15,767 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 14:18:15,767 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 14:18:11 UTC)" executed successfully
+2026-11-12 15:18:11,480 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 15:18:11 UTC)" (scheduled at 2026-11-12 14:18:11.461350+00:00)
+2026-11-12 15:18:12,528 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 15:18:13,953 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 15:18:13,953 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 15:18:13,953 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 15:18:11 UTC)" executed successfully
+2026-11-12 16:18:11,467 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 16:18:11 UTC)" (scheduled at 2026-11-12 15:18:11.461350+00:00)
+2026-11-12 16:18:15,815 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 16:18:15,815 [INFO] __main__: Lidl sync: [me] отправлено 1/1; [wife] новых нет
+2026-11-12 16:18:15,815 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 16:18:11 UTC)" executed successfully
+2026-11-12 16:49:02,535 [INFO] __main__: DD set_record_list: 4 записей, group=1427491118, date=2026-11-12 15:59
+2026-11-12 16:49:06,932 [INFO] __main__: Удалён автоввод Lidl id=262590916 sum=11.16 comment=[Автоввод] [LIDL]
+2026-11-12 16:49:08,907 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 17:18:11,476 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 17:18:11 UTC)" (scheduled at 2026-11-12 16:18:11.461350+00:00)
+2026-11-12 17:18:14,167 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 17:18:16,726 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 17:18:16,726 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 17:18:16,726 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 17:18:11 UTC)" executed successfully
+2026-11-12 18:18:11,476 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 18:18:11 UTC)" (scheduled at 2026-11-12 17:18:11.461350+00:00)
+2026-11-12 18:18:14,056 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 18:18:16,908 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 18:18:16,908 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 18:18:16,908 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 18:18:11 UTC)" executed successfully
+2026-11-12 19:18:11,478 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 19:18:11 UTC)" (scheduled at 2026-11-12 18:18:11.461350+00:00)
+2026-11-12 19:18:14,199 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 19:18:16,742 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 19:18:16,742 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 19:18:16,742 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 19:18:11 UTC)" executed successfully
+2026-11-12 20:18:11,470 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 20:18:11 UTC)" (scheduled at 2026-11-12 19:18:11.461350+00:00)
+2026-11-12 20:18:13,719 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 20:18:15,592 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 20:18:15,592 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 20:18:15,592 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 20:18:11 UTC)" executed successfully
+2026-11-12 21:18:11,475 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 21:18:11 UTC)" (scheduled at 2026-11-12 20:18:11.461350+00:00)
+2026-11-12 21:18:13,361 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 21:18:15,207 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 21:18:15,207 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 21:18:15,207 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 21:18:11 UTC)" executed successfully
+2026-11-12 22:18:11,473 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 22:18:11 UTC)" (scheduled at 2026-11-12 21:18:11.461350+00:00)
+2026-11-12 22:18:12,619 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 22:18:15,007 [INFO] __main__: Lidl sync: [me] новых нет; [wife] отправлено 1/1
+2026-11-12 22:18:15,007 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 22:18:11 UTC)" executed successfully
+2026-11-12 23:18:11,475 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 23:18:11 UTC)" (scheduled at 2026-11-12 22:18:11.461350+00:00)
+2026-11-12 23:18:12,776 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-12 23:18:14,206 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-12 23:18:14,206 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-12 23:18:14,206 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-12 23:18:11 UTC)" executed successfully
+2026-11-13 00:18:11,476 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 00:18:11 UTC)" (scheduled at 2026-11-12 23:18:11.461350+00:00)
+2026-11-13 00:18:12,595 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 00:18:14,019 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 00:18:14,019 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 00:18:14,019 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 00:18:11 UTC)" executed successfully
+2026-11-13 01:18:11,484 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 01:18:11 UTC)" (scheduled at 2026-11-13 00:18:11.461350+00:00)
+2026-11-13 01:18:12,846 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 01:18:14,256 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 01:18:14,256 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 01:18:14,256 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 01:18:11 UTC)" executed successfully
+2026-11-13 02:18:11,476 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 02:18:11 UTC)" (scheduled at 2026-11-13 01:18:11.461350+00:00)
+2026-11-13 02:18:13,249 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 02:18:14,689 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 02:18:14,690 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 02:18:14,690 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 02:18:11 UTC)" executed successfully
+2026-11-13 03:18:11,464 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 03:18:11 UTC)" (scheduled at 2026-11-13 02:18:11.461350+00:00)
+2026-11-13 03:18:12,949 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 03:18:14,247 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 03:18:14,247 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 03:18:14,247 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 03:18:11 UTC)" executed successfully
+2026-11-13 04:18:11,488 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 04:18:11 UTC)" (scheduled at 2026-11-13 03:18:11.461350+00:00)
+2026-11-13 04:18:12,484 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 04:18:14,191 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 04:18:14,191 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 04:18:14,191 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 04:18:11 UTC)" executed successfully
+2026-11-13 05:18:11,463 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 05:18:11 UTC)" (scheduled at 2026-11-13 04:18:11.461350+00:00)
+2026-11-13 05:18:12,659 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 05:18:13,887 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 05:18:13,887 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 05:18:13,889 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 05:18:11 UTC)" executed successfully
+2026-11-13 06:04:53,588 [INFO] __main__: Правило сохранено: piast wrocław.piwo → Спиртные напитки и закуски
+2026-11-13 06:04:53,588 [INFO] __main__: DD set_record_list: 12 записей, group=1425788916, date=2026-11-12 21:39
+2026-11-13 06:04:56,211 [INFO] __main__: Автоввод Lidl на сумму 7694 (2026-11-12) не найден — нечего удалять
+2026-11-13 06:04:57,729 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 06:18:11,474 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 06:18:11 UTC)" (scheduled at 2026-11-13 05:18:11.461350+00:00)
+2026-11-13 06:18:12,790 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 06:18:13,428 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 06:18:13,428 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 06:18:13,428 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 06:18:11 UTC)" executed successfully
+2026-11-13 07:18:11,468 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 07:18:11 UTC)" (scheduled at 2026-11-13 06:18:11.461350+00:00)
+2026-11-13 07:18:12,560 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 07:18:13,651 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 07:18:13,651 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 07:18:13,651 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 07:18:11 UTC)" executed successfully
+2026-11-13 08:18:11,485 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 08:18:11 UTC)" (scheduled at 2026-11-13 07:18:11.461350+00:00)
+2026-11-13 08:18:13,450 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 08:18:15,402 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 08:18:15,402 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 08:18:15,402 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 08:18:11 UTC)" executed successfully
+2026-11-13 09:18:11,473 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 09:18:11 UTC)" (scheduled at 2026-11-13 08:18:11.461350+00:00)
+2026-11-13 09:18:12,612 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 09:18:13,969 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 09:18:13,969 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 09:18:13,971 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 09:18:11 UTC)" executed successfully
+2026-11-13 10:18:11,476 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 10:18:11 UTC)" (scheduled at 2026-11-13 09:18:11.461350+00:00)
+2026-11-13 10:18:13,313 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 10:18:15,244 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 10:18:15,244 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 10:18:15,244 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 10:18:11 UTC)" executed successfully
+2026-11-13 11:18:11,488 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 11:18:11 UTC)" (scheduled at 2026-11-13 10:18:11.461350+00:00)
+2026-11-13 11:18:14,277 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 11:18:17,340 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 11:18:17,340 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 11:18:17,340 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 11:18:11 UTC)" executed successfully
+2026-11-13 12:18:11,477 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 12:18:11 UTC)" (scheduled at 2026-11-13 11:18:11.461350+00:00)
+2026-11-13 12:18:12,811 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 12:18:14,278 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 12:18:14,278 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 12:18:14,278 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 12:18:11 UTC)" executed successfully
+2026-11-13 13:18:11,479 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 13:18:11 UTC)" (scheduled at 2026-11-13 12:18:11.461350+00:00)
+2026-11-13 13:18:13,326 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 13:18:16,497 [INFO] __main__: Lidl sync: [me] новых нет; [wife] отправлено 1/1
+2026-11-13 13:18:16,497 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 13:18:11 UTC)" executed successfully
+2026-11-13 13:23:20,157 [INFO] __main__: Правило сохранено: talarki,safari,prec. → Продукты питания и напитки
+2026-11-13 13:23:21,873 [INFO] __main__: Правило сохранено: kurczak bies.podroby → Продукты питания и напитки
+2026-11-13 13:23:23,592 [INFO] __main__: Правило сохранено: winogrono j.bezp.500 → Продукты питания и напитки
+2026-11-13 13:23:23,592 [INFO] __main__: DD set_record_list: 43 записей, group=1258133368, date=2026-11-13 13:07
+2026-11-13 13:23:26,886 [INFO] __main__: Автоввод Lidl на сумму 26519 (2026-11-13) не найден — нечего удалять
+2026-11-13 13:23:27,685 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 14:18:11,468 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 14:18:11 UTC)" (scheduled at 2026-11-13 13:18:11.461350+00:00)
+2026-11-13 14:18:13,981 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 14:18:16,048 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 14:18:16,048 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 14:18:16,048 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 14:18:11 UTC)" executed successfully
+2026-11-13 15:18:11,466 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 15:18:11 UTC)" (scheduled at 2026-11-13 14:18:11.461350+00:00)
+2026-11-13 15:18:12,874 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 15:18:14,357 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 15:18:14,357 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 15:18:14,357 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 15:18:11 UTC)" executed successfully
+2026-11-13 16:18:11,473 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 16:18:11 UTC)" (scheduled at 2026-11-13 15:18:11.461350+00:00)
+2026-11-13 16:18:13,617 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 16:18:16,172 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 16:18:16,172 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 16:18:16,172 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 16:18:11 UTC)" executed successfully
+2026-11-13 17:18:11,474 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 17:18:11 UTC)" (scheduled at 2026-11-13 16:18:11.461350+00:00)
+2026-11-13 17:18:15,880 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 17:18:15,880 [INFO] __main__: Lidl sync: [me] отправлено 1/1; [wife] новых нет
+2026-11-13 17:18:15,880 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 17:18:11 UTC)" executed successfully
+2026-11-13 17:28:47,332 [INFO] __main__: Правило сохранено: coca-cola 2l. → Продукты питания и напитки
+2026-11-13 17:29:13,481 [INFO] __main__: Правило сохранено: bukiet ger.chr.kw.c. → Цветы
+2026-11-13 17:29:18,130 [INFO] __main__: Правило сохранено: red label → Спиртные напитки и закуски
+2026-11-13 17:29:18,134 [INFO] __main__: DD set_record_list: 4 записей, group=1818932180, date=2026-11-13 16:25
+2026-11-13 17:29:20,467 [INFO] __main__: Автоввод Lidl на сумму 12143 (2026-11-13) не найден — нечего удалять
+2026-11-13 17:29:21,157 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 18:18:11,482 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 18:18:11 UTC)" (scheduled at 2026-11-13 17:18:11.461350+00:00)
+2026-11-13 18:18:13,027 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 18:18:14,588 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 18:18:14,588 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 18:18:14,588 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 18:18:11 UTC)" executed successfully
+2026-11-13 19:18:11,491 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 19:18:11 UTC)" (scheduled at 2026-11-13 18:18:11.461350+00:00)
+2026-11-13 19:18:12,869 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 19:18:14,416 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 19:18:14,416 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 19:18:14,416 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 19:18:11 UTC)" executed successfully
+2026-11-13 20:18:11,482 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 20:18:11 UTC)" (scheduled at 2026-11-13 19:18:11.461350+00:00)
+2026-11-13 20:18:13,061 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 20:18:14,666 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 20:18:14,666 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 20:18:14,666 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 20:18:11 UTC)" executed successfully
+2026-11-13 21:18:11,472 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 21:18:11 UTC)" (scheduled at 2026-11-13 20:18:11.461350+00:00)
+2026-11-13 21:18:14,461 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 21:18:17,631 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 21:18:17,631 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 21:18:17,631 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 21:18:11 UTC)" executed successfully
+2026-11-13 22:18:11,474 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 22:18:11 UTC)" (scheduled at 2026-11-13 21:18:11.461350+00:00)
+2026-11-13 22:18:13,154 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 22:18:15,063 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 22:18:15,063 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 22:18:15,063 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 22:18:11 UTC)" executed successfully
+2026-11-13 23:18:11,479 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 23:18:11 UTC)" (scheduled at 2026-11-13 22:18:11.461350+00:00)
+2026-11-13 23:18:13,361 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-13 23:18:15,045 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-13 23:18:15,045 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-13 23:18:15,045 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-13 23:18:11 UTC)" executed successfully
+2026-11-14 00:18:11,489 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 00:18:11 UTC)" (scheduled at 2026-11-13 23:18:11.461350+00:00)
+2026-11-14 00:18:12,820 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 00:18:14,373 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 00:18:14,373 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 00:18:14,373 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 00:18:11 UTC)" executed successfully
+2026-11-14 01:18:11,470 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 01:18:11 UTC)" (scheduled at 2026-11-14 00:18:11.461350+00:00)
+2026-11-14 01:18:13,097 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 01:18:14,825 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 01:18:14,825 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 01:18:14,825 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 01:18:11 UTC)" executed successfully
+2026-11-14 02:18:11,483 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 02:18:11 UTC)" (scheduled at 2026-11-14 01:18:11.461350+00:00)
+2026-11-14 02:18:12,886 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 02:18:14,591 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 02:18:14,591 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 02:18:14,591 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 02:18:11 UTC)" executed successfully
+2026-11-14 03:18:11,469 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 03:18:11 UTC)" (scheduled at 2026-11-14 02:18:11.461350+00:00)
+2026-11-14 03:18:12,939 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 03:18:14,409 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 03:18:14,409 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 03:18:14,409 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 03:18:11 UTC)" executed successfully
+2026-11-14 04:18:11,474 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 04:18:11 UTC)" (scheduled at 2026-11-14 03:18:11.461350+00:00)
+2026-11-14 04:18:12,661 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 04:18:14,019 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 04:18:14,019 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 04:18:14,019 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 04:18:11 UTC)" executed successfully
+2026-11-14 05:18:11,485 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 05:18:11 UTC)" (scheduled at 2026-11-14 04:18:11.461350+00:00)
+2026-11-14 05:18:13,069 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 05:18:14,281 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 05:18:14,281 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 05:18:14,281 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 05:18:11 UTC)" executed successfully
+2026-11-14 06:18:11,472 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 06:18:11 UTC)" (scheduled at 2026-11-14 05:18:11.461350+00:00)
+2026-11-14 06:18:12,951 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 06:18:14,607 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 06:18:14,607 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 06:18:14,607 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 06:18:11 UTC)" executed successfully
+2026-11-14 07:18:11,478 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 07:18:11 UTC)" (scheduled at 2026-11-14 06:18:11.461350+00:00)
+2026-11-14 07:18:12,696 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 07:18:13,871 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 07:18:13,871 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 07:18:13,871 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 07:18:11 UTC)" executed successfully
+2026-11-14 08:18:11,477 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 08:18:11 UTC)" (scheduled at 2026-11-14 07:18:11.461350+00:00)
+2026-11-14 08:18:13,285 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 08:18:14,720 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 08:18:14,720 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 08:18:14,720 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 08:18:11 UTC)" executed successfully
+2026-11-14 09:18:11,472 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 09:18:11 UTC)" (scheduled at 2026-11-14 08:18:11.461350+00:00)
+2026-11-14 09:18:12,864 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 09:18:14,334 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 09:18:14,334 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 09:18:14,334 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 09:18:11 UTC)" executed successfully
+2026-11-14 10:18:11,489 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 10:18:11 UTC)" (scheduled at 2026-11-14 09:18:11.461350+00:00)
+2026-11-14 10:18:13,817 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 10:18:16,336 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 10:18:16,336 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 10:18:16,336 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 10:18:11 UTC)" executed successfully
+2026-11-14 11:18:11,468 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 11:18:11 UTC)" (scheduled at 2026-11-14 10:18:11.461350+00:00)
+2026-11-14 11:18:13,704 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 11:18:15,628 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 11:18:15,628 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 11:18:15,628 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 11:18:11 UTC)" executed successfully
+2026-11-14 12:18:11,480 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 12:18:11 UTC)" (scheduled at 2026-11-14 11:18:11.461350+00:00)
+2026-11-14 12:18:13,089 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 12:18:14,733 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 12:18:14,733 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 12:18:14,733 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 12:18:11 UTC)" executed successfully
+2026-11-14 13:18:11,473 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 13:18:11 UTC)" (scheduled at 2026-11-14 12:18:11.461350+00:00)
+2026-11-14 13:18:13,070 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 13:18:15,313 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 13:18:15,313 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 13:18:15,314 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 13:18:11 UTC)" executed successfully
+2026-11-14 14:18:11,476 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 14:18:11 UTC)" (scheduled at 2026-11-14 13:18:11.461350+00:00)
+2026-11-14 14:18:12,630 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 14:18:14,792 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 14:18:14,792 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 14:18:14,792 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 14:18:11 UTC)" executed successfully
+2026-11-14 15:18:11,477 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 15:18:11 UTC)" (scheduled at 2026-11-14 14:18:11.461350+00:00)
+2026-11-14 15:18:12,920 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 15:18:14,571 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 15:18:14,573 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 15:18:14,573 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 15:18:11 UTC)" executed successfully
+2026-11-14 16:18:11,473 [INFO] apscheduler.executors.default: Running job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 16:18:11 UTC)" (scheduled at 2026-11-14 15:18:11.461350+00:00)
+2026-11-14 16:18:13,128 [INFO] lidl_sync: Lidl [me]: новых чеков нет
+2026-11-14 16:18:15,544 [INFO] lidl_sync: Lidl [wife]: новых чеков нет
+2026-11-14 16:18:15,544 [INFO] __main__: Lidl sync: [me] новых нет; [wife] новых нет
+2026-11-14 16:18:15,544 [INFO] apscheduler.executors.default: Job "lidl_hourly_sync (trigger: interval[1:00:00], next run at: 2026-11-14 16:18:11 UTC)" executed successfully
